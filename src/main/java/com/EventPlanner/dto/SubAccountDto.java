@@ -23,5 +23,4 @@ public class SubAccountDto {
     private Boolean status;
     private Account account;
     private Location location;
-    private User user;
 }

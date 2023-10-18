@@ -1,6 +1,5 @@
 package com.EventPlanner.service;
 
-import com.EventPlanner.dto.CurrencyDto;
 import com.EventPlanner.dto.IndustryDto;
 
 import java.util.List;

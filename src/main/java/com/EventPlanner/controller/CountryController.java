@@ -1,8 +1,6 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.CountryDto;
-import com.EventPlanner.dto.ProvinceDto;
-import com.EventPlanner.model.Country;
 import com.EventPlanner.service.CountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

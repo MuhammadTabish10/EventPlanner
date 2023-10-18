@@ -23,10 +23,6 @@ public class Country {
     private Boolean status;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
-
-    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     private List<Province> provinces;
 }

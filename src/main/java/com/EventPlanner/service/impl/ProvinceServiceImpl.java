@@ -1,10 +1,8 @@
 package com.EventPlanner.service.impl;
 
-import com.EventPlanner.dto.CountryDto;
 import com.EventPlanner.dto.ProvinceDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Country;
-import com.EventPlanner.model.Location;
 import com.EventPlanner.model.Province;
 import com.EventPlanner.repository.CountryRepository;
 import com.EventPlanner.repository.LocationRepository;
@@ -21,12 +19,10 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     private final ProvinceRepository provinceRepository;
     private final CountryRepository countryRepository;
-    private final LocationRepository locationRepository;
 
-    public ProvinceServiceImpl(ProvinceRepository provinceRepository, CountryRepository countryRepository, LocationRepository locationRepository) {
+    public ProvinceServiceImpl(ProvinceRepository provinceRepository, CountryRepository countryRepository) {
         this.provinceRepository = provinceRepository;
         this.countryRepository = countryRepository;
-        this.locationRepository = locationRepository;
     }
 
     @Override
@@ -38,11 +34,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         Country country = countryRepository.findById(province.getCountry().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", province.getCountry().getId())));
 
-        Location location = locationRepository.findById(province.getLocation().getId())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", province.getLocation().getId())));
-
         province.setCountry(country);
-        province.setLocation(location);
         Province createdProvince = provinceRepository.save(province);
         return toDto(createdProvince);
     }
@@ -104,9 +96,6 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         existingProvince.setCountry(countryRepository.findById(existingProvince.getCountry().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", existingProvince.getCountry().getId()))));
-
-        existingProvince.setLocation(locationRepository.findById(existingProvince.getLocation().getId())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", existingProvince.getLocation().getId()))));
 
         Province updatedProvince = provinceRepository.save(existingProvince);
         return toDto(updatedProvince);

@@ -17,9 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "sub_account")
 public class SubAccount {
 
-//    @EmbeddedId
-//    private SubAccountPK subAccountPK = new SubAccountPK();
-
     @EmbeddedId
     private SubAccountPK id;
 

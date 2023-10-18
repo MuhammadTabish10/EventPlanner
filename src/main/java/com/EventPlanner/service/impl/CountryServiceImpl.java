@@ -3,10 +3,8 @@ package com.EventPlanner.service.impl;
 import com.EventPlanner.dto.CountryDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Country;
-import com.EventPlanner.model.Location;
 import com.EventPlanner.model.Province;
 import com.EventPlanner.repository.CountryRepository;
-import com.EventPlanner.repository.LocationRepository;
 import com.EventPlanner.repository.ProvinceRepository;
 import com.EventPlanner.service.CountryService;
 import org.springframework.stereotype.Service;
@@ -21,12 +19,10 @@ import java.util.stream.Collectors;
 public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final ProvinceRepository provinceRepository;
-    private final LocationRepository locationRepository;
 
-    public CountryServiceImpl(CountryRepository countryRepository, ProvinceRepository provinceRepository, LocationRepository locationRepository) {
+    public CountryServiceImpl(CountryRepository countryRepository, ProvinceRepository provinceRepository) {
         this.countryRepository = countryRepository;
         this.provinceRepository = provinceRepository;
-        this.locationRepository = locationRepository;
     }
 
     @Override
@@ -34,21 +30,15 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto save(CountryDto countryDto) {
         Country country = toEntity(countryDto);
         country.setStatus(true);
-//        Location location = locationRepository.findById(country.getLocation().getId())
-//                .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", country.getLocation().getId())));
-//        country.setLocation(location);
+
+        List<Province> addProvinces = country.getProvinces().stream()
+                .map(province -> provinceRepository.findById(province.getId())
+                        .orElseThrow(() -> new RecordNotFoundException(String.format("Province not found for id => %d", province.getId())))
+                )
+                .collect(Collectors.toList());
+
+        country.setProvinces(addProvinces);
         Country createdCountry = countryRepository.save(country);
-
-//        List<Province> provinces = country.getProvinces();
-//        if(provinces != null && !provinces.isEmpty()){
-//            for(Province province : provinces){
-//                province.setCountry(createdCountry);
-//                province.setStatus();
-//                province.setLocation(locationRepository.findById(country.getLocation().getId())
-//                        .orElseThrow(() -> new RecordNotFoundException("Location not found for id => %d"+ country.getLocation().getId())));
-//            }
-//        }
-
         return toDto(createdCountry);
     }
 
@@ -129,7 +119,6 @@ public class CountryServiceImpl implements CountryService {
                 .name(country.getName())
                 .status(country.getStatus())
                 .provinces(country.getProvinces())
-                .location(country.getLocation())
                 .build();
     }
 
@@ -139,7 +128,6 @@ public class CountryServiceImpl implements CountryService {
                 .name(countryDto.getName())
                 .status(countryDto.getStatus())
                 .provinces(countryDto.getProvinces())
-                .location(countryDto.getLocation())
                 .build();
     }
 }

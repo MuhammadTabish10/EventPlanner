@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.dto.UserDto;
 import com.EventPlanner.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +30,33 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
         return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/user/name/{name}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
+        UserDto userDto = userService.findByName(name);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/user/names/{name}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserDto>> getAllUserByName(@PathVariable String name) {
+        List<UserDto> userDtoList = userService.searchByName(name);
+        return ResponseEntity.ok(userDtoList);
+    }
+
+    @DeleteMapping("/user/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/user/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+        UserDto updatedUserDto = userService.update(id, userDto);
+        return ResponseEntity.ok(updatedUserDto);
     }
 }

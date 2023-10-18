@@ -25,9 +25,4 @@ public class Province {
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
 }

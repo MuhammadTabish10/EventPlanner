@@ -1,6 +1,5 @@
 package com.EventPlanner.repository;
 
-import com.EventPlanner.model.Currency;
 import com.EventPlanner.model.Province;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

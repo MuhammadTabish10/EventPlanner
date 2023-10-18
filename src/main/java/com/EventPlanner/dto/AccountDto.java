@@ -23,5 +23,4 @@ public class AccountDto {
     private Currency currency;
     private Location location;
     private Tag tag;
-    private User user;
 }
