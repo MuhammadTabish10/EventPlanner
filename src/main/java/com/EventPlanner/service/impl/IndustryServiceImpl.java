@@ -29,7 +29,7 @@ public class IndustryServiceImpl implements IndustryService {
 
     @Override
     public List<IndustryDto> getAll() {
-        List<Industry> industryList = industryRepository.findAll();
+        List<Industry> industryList = industryRepository.findAllInDesOrderByIdAndStatus();
         List<IndustryDto> industryDtoList = new ArrayList<>();
 
         for (Industry industry : industryList) {

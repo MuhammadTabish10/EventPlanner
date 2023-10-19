@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class AccountController {
 
     @PostMapping("/account")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountDto accountDto) {
         return ResponseEntity.ok(accountService.save(accountDto));
     }
 
@@ -60,7 +61,7 @@ public class AccountController {
 
     @PutMapping("/account/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id, @RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id, @Valid @RequestBody AccountDto accountDto) {
         AccountDto updatedAccountDto = accountService.update(id, accountDto);
         return ResponseEntity.ok(updatedAccountDto);
     }

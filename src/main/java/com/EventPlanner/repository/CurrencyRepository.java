@@ -15,8 +15,9 @@ public interface CurrencyRepository extends JpaRepository<Currency,Long> {
     Optional<Currency> findByName(String name);
     @Query("SELECT c FROM Currency c WHERE c.name LIKE %:searchName%")
     List<Currency> findCurrencyByName(@Param("searchName") String searchName);
-
     @Modifying
     @Query("UPDATE Currency c SET c.status = false WHERE c.id = :id")
     void setStatusInactive(@Param("id") Long id);
+    @Query("SELECT c FROM Currency c WHERE c.status = true ORDER BY c.id DESC")
+    List<Currency> findAllInDesOrderByIdAndStatus();
 }

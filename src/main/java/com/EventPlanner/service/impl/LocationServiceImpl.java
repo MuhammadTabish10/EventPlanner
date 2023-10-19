@@ -49,7 +49,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<LocationDto> getAll() {
-        List<Location> locationList = locationRepository.findAll();
+        List<Location> locationList = locationRepository.findAllInDesOrderByIdAndStatus();
         List<LocationDto> locationDtoList = new ArrayList<>();
 
         for (Location location : locationList) {

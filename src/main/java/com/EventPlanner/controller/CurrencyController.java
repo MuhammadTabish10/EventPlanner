@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class CurrencyController {
 
     @PostMapping("/currency")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<CurrencyDto> createCurrency(@RequestBody CurrencyDto currencyDto) {
+    public ResponseEntity<CurrencyDto> createCurrency(@Valid @RequestBody CurrencyDto currencyDto) {
         return ResponseEntity.ok(currencyService.save(currencyDto));
     }
 
@@ -60,7 +61,7 @@ public class CurrencyController {
 
     @PutMapping("/currency/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<CurrencyDto> updateCurrency(@PathVariable Long id, @RequestBody CurrencyDto currencyDto) {
+    public ResponseEntity<CurrencyDto> updateCurrency(@PathVariable Long id, @Valid @RequestBody CurrencyDto currencyDto) {
         CurrencyDto updatedCurrencyDto = currencyService.update(id, currencyDto);
         return ResponseEntity.ok(updatedCurrencyDto);
     }

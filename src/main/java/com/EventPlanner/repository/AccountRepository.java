@@ -15,8 +15,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     Optional<Account> findByName(String name);
     @Query("SELECT ac FROM Account ac WHERE ac.name LIKE %:searchName%")
     List<Account> findAccountsByName(@Param("searchName") String searchName);
-
     @Modifying
     @Query("UPDATE Account ac SET ac.status = false WHERE ac.id = :id")
     void setStatusInactive(@Param("id") Long id);
+    @Query("SELECT ac FROM Account ac WHERE ac.status = true ORDER BY ac.id DESC")
+    List<Account> findAllInDesOrderByIdAndStatus();
 }

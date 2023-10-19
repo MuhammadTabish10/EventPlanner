@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountDto> getAll() {
-        List<Account> accounts = accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAllInDesOrderByIdAndStatus();
         List<AccountDto> accountDtoList = new ArrayList<>();
 
         for (Account account : accounts) {

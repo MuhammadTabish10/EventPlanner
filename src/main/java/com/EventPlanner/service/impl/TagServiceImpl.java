@@ -31,7 +31,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> getAll() {
-        List<Tag> tagList = tagRepository.findAll();
+        List<Tag> tagList = tagRepository.findAllInDesOrderByIdAndStatus();
         List<TagDto> tagDtoList = new ArrayList<>();
 
         for (Tag tag : tagList) {

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class ProvinceController {
 
     @PostMapping("/province")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ProvinceDto> createProvince(@RequestBody ProvinceDto provinceDto) {
+    public ResponseEntity<ProvinceDto> createProvince(@Valid @RequestBody ProvinceDto provinceDto) {
         return ResponseEntity.ok(provinceService.save(provinceDto));
     }
 
@@ -60,7 +61,7 @@ public class ProvinceController {
 
     @PutMapping("/province/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ProvinceDto> updateProvince(@PathVariable Long id, @RequestBody ProvinceDto provinceDto) {
+    public ResponseEntity<ProvinceDto> updateProvince(@PathVariable Long id, @Valid @RequestBody ProvinceDto provinceDto) {
         ProvinceDto updatedProvinceDto = provinceService.update(id, provinceDto);
         return ResponseEntity.ok(updatedProvinceDto);
     }

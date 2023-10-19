@@ -5,7 +5,6 @@ import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
 import com.EventPlanner.model.Location;
 import com.EventPlanner.model.SubAccount;
-import com.EventPlanner.model.SubAccountPK;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.LocationRepository;
 import com.EventPlanner.repository.SubAccountRepository;
@@ -52,7 +51,7 @@ public class SubAccountServiceImpl implements SubAccountService {
 
     @Override
     public List<SubAccountDto> getAll() {
-        List<SubAccount> subAccountList = subAccountRepository.findAll();
+        List<SubAccount> subAccountList = subAccountRepository.findAllInDesOrderByIdAndStatus();
         List<SubAccountDto> subAccountDtoList = new ArrayList<>();
 
         for (SubAccount subAccount : subAccountList) {
@@ -63,9 +62,9 @@ public class SubAccountServiceImpl implements SubAccountService {
     }
 
     @Override
-    public SubAccountDto findById(SubAccountPK id) {
-        SubAccount subAccount = subAccountRepository.findByCompositeId(id.getAccountId(),id.getName())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d and name => %s", id.getAccountId(),id.getName())));
+    public SubAccountDto findById(Long id) {
+        SubAccount subAccount = subAccountRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for Id => %d", id)));
         return toDto(subAccount);
     }
 
@@ -90,17 +89,17 @@ public class SubAccountServiceImpl implements SubAccountService {
 
     @Override
     @Transactional
-    public void deleteById(SubAccountPK id) {
-        SubAccount subAccount = subAccountRepository.findByCompositeId(id.getAccountId(),id.getName())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d and name => %s", id.getAccountId(),id.getName())));
-        subAccountRepository.setStatusInactive(subAccount.getId().getAccountId(), subAccount.getId().getName());
+    public void deleteById(Long id) {
+        SubAccount subAccount = subAccountRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for Id => %d", id)));
+        subAccountRepository.setStatusInactive(id);
     }
 
     @Override
     @Transactional
-    public SubAccountDto update(SubAccountPK id, SubAccountDto subAccountDto) {
-        SubAccount existingSubAccount = subAccountRepository.findByCompositeId(id.getAccountId(),id.getName())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d and name => %s", id.getAccountId(),id.getName())));
+    public SubAccountDto update(Long id, SubAccountDto subAccountDto) {
+        SubAccount existingSubAccount = subAccountRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for Id => %d", id)));
 
         existingSubAccount.setLocation(subAccountDto.getLocation());
         existingSubAccount.setPhone(subAccountDto.getPhone());

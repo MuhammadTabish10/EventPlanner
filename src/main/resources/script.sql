@@ -1,0 +1,11 @@
+INSERT INTO `country` VALUES (1,'Pakistan',_binary ''),(2,'India',_binary '');
+INSERT INTO `province` VALUES (1,'Sindh',_binary '',1),(2,'Punjab',_binary '',1),(3,'Up',_binary '',2);
+INSERT INTO `currency` VALUES (1,'Rs',_binary ''),(2,'Doller',_binary '');
+INSERT INTO `tag` VALUES (1,'Tag1',_binary ''),(2,'Tag2',_binary '');
+INSERT INTO `industry` VALUES (1,'Food',_binary ''),(2,'Fashion',_binary '');
+INSERT INTO `location` VALUES (1,'Johar','Block19','Karachi',_binary '',1,1),(2,'Malir','Block2','Karachi',_binary '',1,1),(3,'Gulberg Town','Block4','Lahore',_binary '',1,2),(4,'Malabar Hill','Block5','Mumbai',_binary '',2,3);
+INSERT INTO `account` VALUES (1,'2023-10-18 14:30:00.000000','Kfc','12345',_binary '','www.kfc.com',1,1,1,1),(2,'2023-10-18 14:30:00.000000','Outfitters','13235',_binary '','www.outfitters.com',1,2,2,2);
+INSERT INTO `sub_account` VALUES (1,'2023-10-19 14:30:00.000000','Kfc-Johar','87356245',_binary '','www.kfc-johar.com',1,1),(2,'2023-10-19 14:31:00.000000','Kfc-Malir','7352748',_binary '','www.kfc-malir.com',2,2),(3,'2023-10-19 14:32:00.000000','Outfitters-Johar','63527',_binary '','www.outfitter.com',1,1);
+INSERT INTO `roles` VALUES (1,'ROLE_ADMIN');
+INSERT INTO `users` VALUES (1,'muhammadtabish05@gmail.com','Tabish','Rashid','tabish','$2a$12$0R7nfwHHrgfAg/.EJCAzwODios9FWft5AiVWUcpLAJu1x4fIOSUBK','08865473352',_binary '','www.tabish.com',1,1,1);
+INSERT INTO `user_roles` VALUES (1,1);

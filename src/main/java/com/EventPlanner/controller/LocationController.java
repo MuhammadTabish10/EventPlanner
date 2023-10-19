@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class LocationController {
 
     @PostMapping("/location")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<LocationDto> createLocation(@RequestBody LocationDto locationDto) {
+    public ResponseEntity<LocationDto> createLocation(@Valid @RequestBody LocationDto locationDto) {
         return ResponseEntity.ok(locationService.save(locationDto));
     }
 
@@ -46,7 +47,7 @@ public class LocationController {
 
     @PutMapping("/location/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<LocationDto> updateLocation(@PathVariable Long id, @RequestBody LocationDto locationDto) {
+    public ResponseEntity<LocationDto> updateLocation(@PathVariable Long id, @Valid @RequestBody LocationDto locationDto) {
         LocationDto updatedLocationDto = locationService.update(id, locationDto);
         return ResponseEntity.ok(updatedLocationDto);
     }

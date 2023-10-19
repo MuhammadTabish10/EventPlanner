@@ -17,8 +17,10 @@ import java.time.LocalDateTime;
 @Table(name = "sub_account")
 public class SubAccount {
 
-    @EmbeddedId
-    private SubAccountPK id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

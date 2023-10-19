@@ -29,7 +29,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public List<CurrencyDto> getAll() {
-        List<Currency> currencyList = currencyRepository.findAll();
+        List<Currency> currencyList = currencyRepository.findAllInDesOrderByIdAndStatus();
         List<CurrencyDto> currencyDtoList = new ArrayList<>();
 
         for (Currency currency : currencyList) {

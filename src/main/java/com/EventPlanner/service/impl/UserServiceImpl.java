@@ -39,9 +39,11 @@ public class UserServiceImpl implements UserService {
         Account account = accountRepository.findById(user.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", user.getAccount().getId())));
 
-        SubAccount subAccount = subAccountRepository.findByCompositeId(user.getSubAccount().getId().getAccountId(), user.getSubAccount().getId().getName())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d and name => %s",
-                        user.getSubAccount().getId().getAccountId(), user.getSubAccount().getId().getName())));
+        SubAccount subAccount = user.getSubAccount();
+        if(subAccount != null){
+            subAccount = subAccountRepository.findById(user.getSubAccount().getId())
+                    .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d", user.getSubAccount().getId())));
+        }
 
         Location location = locationRepository.findById(user.getLocation().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", user.getLocation().getId())));
@@ -63,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        List<User> userList = userRepository.findAll();
+        List<User> userList = userRepository.findAllInDesOrderByIdAndStatus();
         List<UserDto> userDtoList = new ArrayList<>();
 
         for (User user : userList) {
@@ -131,9 +133,10 @@ public class UserServiceImpl implements UserService {
         existingUser.setAccount(accountRepository.findById(userDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", userDto.getAccount().getId()))));
 
-        existingUser.setSubAccount(subAccountRepository.findByCompositeId(userDto.getSubAccount().getId().getAccountId(), userDto.getSubAccount().getId().getName())
-                .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d and name => %s",
-                        userDto.getSubAccount().getId().getAccountId(), userDto.getSubAccount().getId().getName()))));
+        if(userDto.getSubAccount() != null){
+            existingUser.setSubAccount(subAccountRepository.findById(userDto.getSubAccount().getId())
+                    .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for accountId => %d", userDto.getSubAccount().getId()))));
+        }
 
         existingUser.setLocation(locationRepository.findById(userDto.getLocation().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", userDto.getLocation().getId()))));

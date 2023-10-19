@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class TagController {
 
     @PostMapping("/tag")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
+    public ResponseEntity<TagDto> createTag(@Valid @RequestBody TagDto tagDto) {
         return ResponseEntity.ok(tagService.save(tagDto));
     }
 
@@ -60,7 +61,7 @@ public class TagController {
 
     @PutMapping("/tag/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<TagDto> updateTag(@PathVariable Long id, @RequestBody TagDto tagDto) {
+    public ResponseEntity<TagDto> updateTag(@PathVariable Long id, @Valid @RequestBody TagDto tagDto) {
         TagDto updatedTagDto = tagService.update(id, tagDto);
         return ResponseEntity.ok(updatedTagDto);
     }

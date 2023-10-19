@@ -18,4 +18,6 @@ public interface IndustryRepository extends JpaRepository<Industry,Long> {
     void setStatusInactive(@Param("id") Long id);
     @Query("SELECT i FROM Industry i WHERE i.name LIKE %:searchName%")
     List<Industry> findIndustryByName(@Param("searchName") String searchName);
+    @Query("SELECT i FROM Industry i WHERE i.status = true ORDER BY i.id DESC")
+    List<Industry> findAllInDesOrderByIdAndStatus();
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -32,11 +33,9 @@ public class User {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Nullable
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "sub_account_account_id", referencedColumnName = "account_id"),
-            @JoinColumn(name = "sub_account_name", referencedColumnName = "name")
-    })
+    @JoinColumn(name = "sub_Account_id")
     private SubAccount subAccount;
 
     @ManyToOne

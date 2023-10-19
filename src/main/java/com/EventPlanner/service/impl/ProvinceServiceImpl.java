@@ -41,7 +41,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     public List<ProvinceDto> getAll() {
-        List<Province> provinceList = provinceRepository.findAll();
+        List<Province> provinceList = provinceRepository.findAllInDesOrderByIdAndStatus();
         List<ProvinceDto> provinceDtoList = new ArrayList<>();
 
         for (Province province : provinceList) {

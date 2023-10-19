@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class CountryController {
 
     @PostMapping("/country")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<CountryDto> createCountry(@RequestBody CountryDto countryDto) {
+    public ResponseEntity<CountryDto> createCountry(@Valid @RequestBody CountryDto countryDto) {
         return ResponseEntity.ok(countryService.save(countryDto));
     }
 
@@ -60,7 +61,7 @@ public class CountryController {
 
     @PutMapping("/country/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<CountryDto> updateCountry(@PathVariable Long id, @RequestBody CountryDto countryDto) {
+    public ResponseEntity<CountryDto> updateCountry(@PathVariable Long id, @Valid @RequestBody CountryDto countryDto) {
         CountryDto updatedCountryDto = countryService.update(id, countryDto);
         return ResponseEntity.ok(updatedCountryDto);
     }

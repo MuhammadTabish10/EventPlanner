@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class LoginController {
@@ -31,7 +33,7 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginCredentials loginCredentials) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody LoginCredentials loginCredentials) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginCredentials.getName(), loginCredentials.getPassword())
@@ -48,7 +50,7 @@ public class LoginController {
 
     @PostMapping("/signup")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> signup(@RequestBody UserDto userdto) {
+    public ResponseEntity<?> signup(@Valid @RequestBody UserDto userdto) {
         userService.registerUser(userdto);
         return ResponseEntity.ok("User registered successfully.");
     }

@@ -15,8 +15,9 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
     Optional<Country> findByName(String name);
     @Query("SELECT con FROM Country con WHERE con.name LIKE %:searchName%")
     List<Country> findCountriesByName(@Param("searchName") String searchName);
-
     @Modifying
     @Query("UPDATE Country con SET con.status = false WHERE con.id = :id")
     void setStatusInactive(@Param("id") Long id);
+    @Query("SELECT c FROM Country c WHERE c.status = true ORDER BY c.id DESC")
+    List<Country> findAllInDesOrderByIdAndStatus();
 }

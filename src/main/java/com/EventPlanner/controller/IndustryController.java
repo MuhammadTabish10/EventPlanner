@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class IndustryController {
 
     @PostMapping("/industry")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<IndustryDto> createIndustry(@RequestBody IndustryDto industryDto) {
+    public ResponseEntity<IndustryDto> createIndustry(@Valid @RequestBody IndustryDto industryDto) {
         return ResponseEntity.ok(industryService.save(industryDto));
     }
 
@@ -60,7 +61,7 @@ public class IndustryController {
 
     @PutMapping("/industry/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<IndustryDto> updateIndustry(@PathVariable Long id, @RequestBody IndustryDto industryDto) {
+    public ResponseEntity<IndustryDto> updateIndustry(@PathVariable Long id, @Valid @RequestBody IndustryDto industryDto) {
         IndustryDto updatedIndustryDto = industryService.update(id, industryDto);
         return ResponseEntity.ok(updatedIndustryDto);
     }

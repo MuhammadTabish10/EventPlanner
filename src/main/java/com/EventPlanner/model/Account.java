@@ -43,5 +43,4 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "tag_id")
     private Tag tag;
-
 }
