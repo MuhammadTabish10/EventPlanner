@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account,Long> {
     Optional<Account> findByName(String name);
-    @Query("SELECT ac FROM Account ac WHERE ac.name LIKE %:searchName%")
+    @Query("SELECT ac FROM Account ac WHERE ac.name LIKE %:searchName% AND ac.status = true")
     List<Account> findAccountsByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE Account ac SET ac.status = false WHERE ac.id = :id")

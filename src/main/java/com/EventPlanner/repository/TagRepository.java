@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface TagRepository extends JpaRepository<Tag,Long> {
     Optional<Tag> findByName(String name);
-    @Query("SELECT t FROM Tag t WHERE t.name LIKE %:searchName%")
+    @Query("SELECT t FROM Tag t WHERE t.name LIKE %:searchName% AND t.status = true")
     List<Tag> findTagByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE Tag t SET t.status = false WHERE t.id = :id")

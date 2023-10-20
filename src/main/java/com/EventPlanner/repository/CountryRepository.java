@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
     Optional<Country> findByName(String name);
-    @Query("SELECT con FROM Country con WHERE con.name LIKE %:searchName%")
+    @Query("SELECT con FROM Country con WHERE con.name LIKE %:searchName% AND con.status = true")
     List<Country> findCountriesByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE Country con SET con.status = false WHERE con.id = :id")

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String username);
-    @Query("SELECT u FROM User u WHERE u.name LIKE %:searchName%")
+    @Query("SELECT u FROM User u WHERE u.name LIKE %:searchName% AND u.status = true")
     List<User> findUserByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE User u SET u.status = false WHERE u.id = :id")

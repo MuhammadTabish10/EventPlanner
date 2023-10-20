@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CurrencyRepository extends JpaRepository<Currency,Long> {
     Optional<Currency> findByName(String name);
-    @Query("SELECT c FROM Currency c WHERE c.name LIKE %:searchName%")
+    @Query("SELECT c FROM Currency c WHERE c.name LIKE %:searchName% AND c.status = true")
     List<Currency> findCurrencyByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE Currency c SET c.status = false WHERE c.id = :id")

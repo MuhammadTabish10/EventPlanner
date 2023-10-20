@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
     Optional<Province> findByName(String name);
-    @Query("SELECT p FROM Province p WHERE p.name LIKE %:searchName%")
+    @Query("SELECT p FROM Province p WHERE p.name LIKE %:searchName% AND p.status = true")
     List<Province> findProvinceByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE Province p SET p.status = false WHERE p.id = :id")

@@ -15,7 +15,7 @@ public interface SubAccountRepository extends JpaRepository<SubAccount, Long> {
 
     @Query("SELECT sub FROM SubAccount sub WHERE sub.name = :name")
     Optional<SubAccount> findByName(@Param("name")String name);
-    @Query("SELECT sub FROM SubAccount sub WHERE sub.name LIKE %:searchName%")
+    @Query("SELECT sub FROM SubAccount sub WHERE sub.name LIKE %:searchName% AND sub.status = true")
     List<SubAccount> findSubAccountByName(@Param("searchName") String searchName);
     @Modifying
     @Query("UPDATE SubAccount sub SET sub.status = false WHERE sub.id = :id")
