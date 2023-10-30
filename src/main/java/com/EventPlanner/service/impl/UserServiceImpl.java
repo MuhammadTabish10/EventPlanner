@@ -50,9 +50,9 @@ public class UserServiceImpl implements UserService {
 
         Set<Role> roleList = new HashSet<>();
         for(Role role: user.getRoles()){
-            roleRepository.findById(role.getId())
+            Role savedRole = roleRepository.findById(role.getId())
                     .orElseThrow(()-> new RecordNotFoundException("Role not found"));
-            roleList.add(role);
+            roleList.add(savedRole);
         }
 
         user.setAccount(account);

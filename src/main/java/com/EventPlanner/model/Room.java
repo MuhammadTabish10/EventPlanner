@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "account")
-public class Account {
+@Table(name = "room")
+public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,23 +26,15 @@ public class Account {
     private LocalDateTime createdAt;
 
     private String name;
-    private String phone;
-    private String website;
+    private Double capacity;
+    private String attachments;
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "industry_id")
-    private Industry industry;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "currency_id")
-    private Currency currency;
-
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
-
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
 }

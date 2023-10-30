@@ -25,7 +25,8 @@ public class IndustryServiceImpl implements IndustryService {
         Industry industry = toEntity(industryDto);
         industry.setStatus(true);
         Industry createdIndustry = industryRepository.save(industry);
-        return toDto(createdIndustry);    }
+        return toDto(createdIndustry);
+    }
 
     @Override
     public List<IndustryDto> getAll() {

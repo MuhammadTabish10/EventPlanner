@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "account")
-public class Account {
+@Table(name = "contact")
+public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,24 +25,34 @@ public class Account {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private String name;
+    private String customer;
+    private String firstName;
+    private String lastName;
+    private String jobTitle;
+    private String email;
     private String phone;
+    private String profileDescription;
+    private String bioDescription;
+    private String headShotImage;
     private String website;
+    private String twitter;
+    private String instagram;
+    private String linkedin;
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "industry_id")
-    private Industry industry;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "currency_id")
-    private Currency currency;
+    @JoinColumn(name = "sub_account_id")
+    private SubAccount subAccount;
 
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 
     @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    @JoinColumn(name = "contact_type_id")
+    private ContactType contactType;
 }

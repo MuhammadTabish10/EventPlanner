@@ -1,5 +1,6 @@
 package com.EventPlanner.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 public class ErrorMessage<T>
 {
     T error;
+
+    @JsonFormat(pattern = "YYYY-MM-dd HH:mm:ss")
     LocalDateTime time;
 }
 

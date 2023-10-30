@@ -54,7 +54,7 @@ public class CurrencyController {
 
         @DeleteMapping("/currency/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCurrency(@PathVariable Long id) {
         currencyService.deleteById(id);
         return ResponseEntity.ok().build();
     }
