@@ -128,7 +128,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setPhone(userDto.getPhone());
         existingUser.setEmail(userDto.getEmail());
         existingUser.setWebsite(userDto.getWebsite());
-        existingUser.setStatus(userDto.getStatus());
 
         existingUser.setAccount(accountRepository.findById(userDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", userDto.getAccount().getId()))));

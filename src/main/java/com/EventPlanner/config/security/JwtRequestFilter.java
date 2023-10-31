@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            response.setStatus(401);
+            response.setStatus(500);
             response.setHeader("Access-Control-Allow-Origin", "*");
             return;
         }

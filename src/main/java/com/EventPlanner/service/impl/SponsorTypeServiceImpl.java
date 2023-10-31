@@ -90,7 +90,6 @@ public class SponsorTypeServiceImpl implements SponsorTypeService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Sponsor Type not found for id => %d", id)));
 
         existingSponsorType.setType(sponsorTypeDto.getType());
-        existingSponsorType.setStatus(sponsorTypeDto.getStatus());
 
         existingSponsorType.setAccount(accountRepository.findById(sponsorTypeDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", sponsorTypeDto.getAccount().getId()))));

@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Location not found for id => %d", account.getLocation().getId()))));
         account.setTag(tagRepository.findById(account.getTag().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Tag not found for id => %d", account.getTag().getId()))));
-        Account createdAccount =  accountRepository.save(account);
+        Account createdAccount = accountRepository.save(account);
         return toDto(createdAccount);
     }
 
@@ -100,7 +100,6 @@ public class AccountServiceImpl implements AccountService {
         existingAccount.setName(accountDto.getName());
         existingAccount.setPhone(accountDto.getPhone());
         existingAccount.setWebsite(accountDto.getWebsite());
-        existingAccount.setStatus(accountDto.getStatus());
 
         existingAccount.setIndustry(industryRepository.findById(accountDto.getIndustry().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Industry not found for id => %d", accountDto.getIndustry().getId()))));

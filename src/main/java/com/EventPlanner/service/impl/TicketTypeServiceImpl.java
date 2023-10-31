@@ -90,7 +90,6 @@ public class TicketTypeServiceImpl implements TicketTypeService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Ticket Type not found for id => %d", id)));
 
         existingTicketType.setType(ticketTypeDto.getType());
-        existingTicketType.setStatus(ticketTypeDto.getStatus());
 
         existingTicketType.setAccount(accountRepository.findById(ticketTypeDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", ticketTypeDto.getAccount().getId()))));

@@ -82,7 +82,6 @@ public class TagServiceImpl implements TagService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Tag not found for id => %d", id)));
 
         existingTag.setName(tagDto.getName());
-        existingTag.setStatus(tagDto.getStatus());
 
         Tag updatedTag = tagRepository.save(existingTag);
         return toDto(updatedTag);

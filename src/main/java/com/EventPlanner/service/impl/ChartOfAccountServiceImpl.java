@@ -93,7 +93,6 @@ public class ChartOfAccountServiceImpl implements ChartOfAccountService {
         existingChartOfAccount.setGlAccount(chartOfAccountDto.getGlAccount());
         existingChartOfAccount.setDescription(chartOfAccountDto.getDescription());
         existingChartOfAccount.setType(chartOfAccountDto.getType());
-        existingChartOfAccount.setStatus(chartOfAccountDto.getStatus());
 
         existingChartOfAccount.setAccount(accountRepository.findById(chartOfAccountDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", chartOfAccountDto.getAccount().getId()))));

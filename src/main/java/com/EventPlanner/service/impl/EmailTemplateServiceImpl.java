@@ -100,7 +100,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Email Template not found for id => %d", id)));
 
         existingEmailTemplate.setName(emailTemplateDto.getName());
-        existingEmailTemplate.setStatus(emailTemplateDto.getStatus());
 
         existingEmailTemplate.setAccount(accountRepository.findById(emailTemplateDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", emailTemplateDto.getAccount().getId()))));

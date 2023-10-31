@@ -83,7 +83,6 @@ public class LocationServiceImpl implements LocationService {
         existingLocation.setAddress1(locationDto.getAddress1());
         existingLocation.setAddress2(locationDto.getAddress2());
         existingLocation.setCity(locationDto.getCity());
-        existingLocation.setStatus(locationDto.getStatus());
 
         existingLocation.setCountry(countryRepository.findById(locationDto.getCountry().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", locationDto.getCountry().getId()))));

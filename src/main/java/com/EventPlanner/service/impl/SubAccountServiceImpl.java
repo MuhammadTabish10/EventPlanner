@@ -104,7 +104,6 @@ public class SubAccountServiceImpl implements SubAccountService {
         existingSubAccount.setLocation(subAccountDto.getLocation());
         existingSubAccount.setPhone(subAccountDto.getPhone());
         existingSubAccount.setWebsite(subAccountDto.getWebsite());
-        existingSubAccount.setStatus(subAccountDto.getStatus());
 
         existingSubAccount.setAccount(accountRepository.findById(subAccountDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", subAccountDto.getAccount().getId()))));

@@ -32,7 +32,7 @@ public class QuestionsController {
         return ResponseEntity.ok(questionsDtoList);
     }
 
-    @GetMapping("/questions/{id}")
+    @GetMapping("/question/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<QuestionsDto> getQuestionsById(@PathVariable Long id) {
         QuestionsDto questionsDto = questionsService.findById(id);

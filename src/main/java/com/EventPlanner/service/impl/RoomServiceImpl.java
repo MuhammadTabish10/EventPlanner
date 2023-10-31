@@ -103,7 +103,6 @@ public class RoomServiceImpl implements RoomService {
         existingRoom.setName(roomDto.getName());
         existingRoom.setCapacity(roomDto.getCapacity());
         existingRoom.setAttachments(roomDto.getAttachments());
-        existingRoom.setStatus(roomDto.getStatus());
 
         existingRoom.setAccount(accountRepository.findById(roomDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", roomDto.getAccount().getId()))));

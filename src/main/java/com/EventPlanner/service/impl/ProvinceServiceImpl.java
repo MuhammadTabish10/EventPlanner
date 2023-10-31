@@ -92,7 +92,6 @@ public class ProvinceServiceImpl implements ProvinceService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Province not found for id => %d", id)));
 
         existingProvince.setName(provinceDto.getName());
-        existingProvince.setStatus(provinceDto.getStatus());
 
         existingProvince.setCountry(countryRepository.findById(existingProvince.getCountry().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", existingProvince.getCountry().getId()))));

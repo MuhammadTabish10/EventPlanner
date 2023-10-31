@@ -90,7 +90,6 @@ public class ContactTypeServiceImpl implements ContactTypeService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("ContactType not found for id => %d", id)));
 
         existingContactType.setType(contactTypeDto.getType());
-        existingContactType.setStatus(contactTypeDto.getStatus());
 
         existingContactType.setAccount(accountRepository.findById(contactTypeDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", contactTypeDto.getAccount().getId()))));

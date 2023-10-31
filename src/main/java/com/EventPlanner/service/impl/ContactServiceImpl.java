@@ -118,7 +118,6 @@ public class ContactServiceImpl implements ContactService {
         existingContact.setTwitter(contactDto.getTwitter());
         existingContact.setInstagram(contactDto.getInstagram());
         existingContact.setLinkedin(contactDto.getLinkedin());
-        existingContact.setStatus(contactDto.getStatus());
 
         existingContact.setAccount(accountRepository.findById(contactDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", contactDto.getAccount().getId()))));

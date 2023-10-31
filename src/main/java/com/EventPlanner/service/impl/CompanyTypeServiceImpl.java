@@ -90,7 +90,6 @@ public class CompanyTypeServiceImpl implements CompanyTypeService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("CompanyType not found for id => %d", id)));
 
         existingCompanyType.setType(companyTypeDto.getType());
-        existingCompanyType.setStatus(companyTypeDto.getStatus());
 
         existingCompanyType.setAccount(accountRepository.findById(companyTypeDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", companyTypeDto.getAccount().getId()))));

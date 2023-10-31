@@ -91,7 +91,6 @@ public class EventTypeServiceImpl implements EventTypeService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("EventType not found for id => %d", id)));
 
         existingEventType.setName(eventTypeDto.getName());
-        existingEventType.setStatus(eventTypeDto.getStatus());
 
         existingEventType.setAccount(accountRepository.findById(eventTypeDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", eventTypeDto.getAccount().getId()))));

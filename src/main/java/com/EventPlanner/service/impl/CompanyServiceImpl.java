@@ -124,7 +124,6 @@ public class CompanyServiceImpl implements CompanyService {
         existingCompany.setTwitter(companyDto.getTwitter());
         existingCompany.setInstagram(companyDto.getInstagram());
         existingCompany.setLinkedin(companyDto.getLinkedin());
-        existingCompany.setStatus(companyDto.getStatus());
 
         existingCompany.setAccount(accountRepository.findById(companyDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", companyDto.getAccount().getId()))));

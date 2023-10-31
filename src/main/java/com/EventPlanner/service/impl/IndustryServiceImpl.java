@@ -81,7 +81,6 @@ public class IndustryServiceImpl implements IndustryService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Industry not found for id => %d", id)));
 
         existingIndustry.setName(industryDto.getName());
-        existingIndustry.setStatus(industryDto.getStatus());
 
         Industry updatedIndustry = industryRepository.save(existingIndustry);
         return toDto(updatedIndustry);

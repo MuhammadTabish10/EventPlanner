@@ -124,7 +124,6 @@ public class VenueServiceImpl implements VenueService {
         existingVenue.setTwitter(venueDto.getTwitter());
         existingVenue.setInstagram(venueDto.getInstagram());
         existingVenue.setLinkedin(venueDto.getLinkedin());
-        existingVenue.setStatus(venueDto.getStatus());
 
         existingVenue.setAccount(accountRepository.findById(venueDto.getAccount().getId())
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", venueDto.getAccount().getId()))));

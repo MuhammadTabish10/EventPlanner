@@ -80,7 +80,6 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Currency not found for id => %d", id)));
 
         existingCurrency.setName(currencyDto.getName());
-        existingCurrency.setStatus(currencyDto.getStatus());
 
         Currency updatedCurrency = currencyRepository.save(existingCurrency);
         return toDto(updatedCurrency);

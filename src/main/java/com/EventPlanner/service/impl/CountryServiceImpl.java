@@ -95,7 +95,6 @@ public class CountryServiceImpl implements CountryService {
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", id)));
 
         existingCountry.setName(countryDto.getName());
-        existingCountry.setStatus(countryDto.getStatus());
 
         Set<Long> provinceIds = countryDto.getProvinces()
                 .stream()
