@@ -9,3 +9,16 @@ INSERT INTO `sub_account` VALUES (1,'2023-10-19 14:30:00.000000','Kfc-Johar','87
 INSERT INTO `roles` VALUES (1,'ROLE_ADMIN');
 INSERT INTO `users` VALUES (1,'muhammadtabish05@gmail.com','Tabish','Rashid','tabish','$2a$12$0R7nfwHHrgfAg/.EJCAzwODios9FWft5AiVWUcpLAJu1x4fIOSUBK','08865473352',_binary '','www.tabish.com',1,1,1);
 INSERT INTO `user_roles` VALUES (1,1);
+INSERT INTO `chart_of_account` VALUES (1,'Sample description for the account','789123','SampleAccount',_binary '','Asset',2);
+INSERT INTO `email_template` VALUES (1,'Sample',_binary '',2,1);
+INSERT INTO `questions` VALUES (1,_binary '\0','This is a sample question description.',_binary '','SampleQuestion',_binary '','Multiple Choice',1);
+INSERT INTO `sponsor_type` VALUES (1,_binary '','EventSponsor',2);
+INSERT INTO `company_type` VALUES (1,_binary '\0','Partner',1);
+INSERT INTO `contact_type` VALUES (1,_binary '','Speaker',1);
+INSERT INTO `event_type` VALUES (1,'Podium',_binary '',1);
+INSERT INTO `ticket_type` VALUES (1,_binary '','Donor',2);
+INSERT INTO `contact` VALUES (1,'I am from Pakistan','2023-10-27 20:34:02.538000','BasimAhmed','basim06@gmail.com','Basim','https://christophertoddstudios.com/wp-content/uploads/2022/12/FelipeSoriano-124.jpeg','www.instagram.com','Manager','Ahmed','www.linkedin.com','3352314456','Hi I am a Manager',_binary '','www.twitter.com','www.profile.com',1,1,1,1),(2,'I am from Pakistan','2023-10-27 23:24:43.257000','Zaeem Ahmed','zaeem06@gmail.com','Zaeem','https://christophertoddstudios.com/wp-content/uploads/2022/12/FelipeSoriano-124.jpeg','www.instagram.com','Manager','Ahmed','www.linkedin.com','3352314456','Hi I am a Manager',_binary '\0','www.twitter.com','www.profile.com',1,1,1,1);
+INSERT INTO `venue` VALUES (1,'sample_attachment.pdf',200,'2023-10-27 23:24:56.044000','http://maps.google.com/sample','@sampleInstagram','sample-linkedin','Venue1','1234567890','john.doe@example.com','John Doe','9876543210',_binary '','@sampleTwitter','http://www.example.com',1,1,1),(2,'sample_attachment.pdf',680,'2023-10-27 23:31:00.841000','http://maps.google.com/sample','@sampleInstagram','sample-linkedin','Venue2','1234567890','peter.doe@example.com','Peter','9876543210',_binary '','@sampleTwitter','http://www.example.com',1,1,1);
+INSERT INTO `venue_contact` VALUES (1,1),(2,1),(1,2);
+INSERT INTO `room` VALUES (1,'attach12',280,'2023-10-30 18:23:06.104000','Room1',_binary '',2,1);
+INSERT INTO `company` VALUES (1,'2023-10-30 20:11:50.509000','@samplecompany','samplecompany','Company1','This is a sample company profile.',_binary '','@samplecompany','https://www.samplecompany.com',2,1,1,1,2,1);
