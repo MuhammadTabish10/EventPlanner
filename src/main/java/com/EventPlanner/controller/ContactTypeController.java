@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.ContactTypeDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.ContactTypeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class ContactTypeController {
         return ResponseEntity.ok(contactTypeDtoList);
     }
 
+    @GetMapping("/contact-type/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedContactType(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = contactTypeService.getAllPaginatedContactType(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/contact-type/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ContactTypeDto> getContactTypeById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class ContactTypeController {
 
     @GetMapping("/contact-type/types/{type}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ContactTypeDto>> getAllContactTypesByType(@PathVariable String type) {
-        List<ContactTypeDto> contactTypeDtoList = contactTypeService.searchByType(type);
-        return ResponseEntity.ok(contactTypeDtoList);
+    public ResponseEntity<PaginationResponse> getAllContactTypesByType(
+            @PathVariable String type,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = contactTypeService.searchByType(type, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/contact-type/{id}")

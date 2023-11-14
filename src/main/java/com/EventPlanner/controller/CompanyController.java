@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.CompanyDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.CompanyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class CompanyController {
         return ResponseEntity.ok(companyDtoList);
     }
 
+    @GetMapping("/company/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedCompany(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = companyService.getAllPaginatedCompany(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/company/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CompanyDto> getCompanyById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class CompanyController {
 
     @GetMapping("/company/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<CompanyDto>> getAllCompanyByName(@PathVariable String name) {
-        List<CompanyDto> companyDtoList = companyService.searchByName(name);
-        return ResponseEntity.ok(companyDtoList);
+    public ResponseEntity<PaginationResponse> getAllCompanyByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = companyService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/company/{id}")

@@ -1,10 +1,16 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.ContactTypeDto;
 import com.EventPlanner.dto.CurrencyDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
+import com.EventPlanner.model.ContactType;
 import com.EventPlanner.model.Currency;
 import com.EventPlanner.repository.CurrencyRepository;
 import com.EventPlanner.service.CurrencyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -40,6 +46,52 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedCurrency(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Currency> pageCurrency = currencyRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Currency> currencyList = pageCurrency.getContent();
+
+        List<CurrencyDto> currencyDtoList = new ArrayList<>();
+        for (Currency currency : currencyList) {
+            CurrencyDto currencyDto = toDto(currency);
+            currencyDtoList.add(currencyDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(currencyDtoList);
+        paginationResponse.setPageNumber(pageCurrency.getNumber());
+        paginationResponse.setPageSize(pageCurrency.getSize());
+        paginationResponse.setTotalElements(pageCurrency.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCurrency.getTotalPages());
+        paginationResponse.setLastPage(pageCurrency.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Currency> pageCurrency = currencyRepository.findCurrencyByName(name,page);
+        List<Currency> currencyList = pageCurrency.getContent();
+
+        List<CurrencyDto> currencyDtoList = new ArrayList<>();
+        for (Currency currency : currencyList) {
+            CurrencyDto currencyDto = toDto(currency);
+            currencyDtoList.add(currencyDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(currencyDtoList);
+        paginationResponse.setPageNumber(pageCurrency.getNumber());
+        paginationResponse.setPageSize(pageCurrency.getSize());
+        paginationResponse.setTotalElements(pageCurrency.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCurrency.getTotalPages());
+        paginationResponse.setLastPage(pageCurrency.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public CurrencyDto findById(Long id) {
         Currency currency = currencyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Currency not found for id => %d", id)));
@@ -51,18 +103,6 @@ public class CurrencyServiceImpl implements CurrencyService {
         Currency currency = currencyRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Currency not found for name => %s", name)));
         return toDto(currency);
-    }
-
-    @Override
-    public List<CurrencyDto> searchByName(String name) {
-        List<Currency> currencyList = currencyRepository.findCurrencyByName(name);
-        List<CurrencyDto> currencyDtoList = new ArrayList<>();
-
-        for (Currency currency : currencyList) {
-            CurrencyDto currencyDto = toDto(currency);
-            currencyDtoList.add(currencyDto);
-        }
-        return currencyDtoList;
     }
 
     @Override

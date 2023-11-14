@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.SponsorTypeDto;
 import com.EventPlanner.service.SponsorTypeService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class SponsorTypeController {
         return ResponseEntity.ok(sponsorTypeDtoList);
     }
 
+    @GetMapping("/sponsor-type/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedSponsorType(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = sponsorTypeService.getAllPaginatedSponsorType(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/sponsor-type/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<SponsorTypeDto> getSponsorTypeById(@PathVariable Long id) {
@@ -47,10 +58,15 @@ public class SponsorTypeController {
 
     @GetMapping("/sponsor-type/types/{type}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<SponsorTypeDto>> getAllSponsorTypeByType(@PathVariable String type) {
-        List<SponsorTypeDto> sponsorTypeDtoList = sponsorTypeService.searchByType(type);
-        return ResponseEntity.ok(sponsorTypeDtoList);
+    public ResponseEntity<PaginationResponse> getAllSponsorTypeByType(
+            @PathVariable String type,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = sponsorTypeService.searchByType(type, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
+
 
     @DeleteMapping("/sponsor-type/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

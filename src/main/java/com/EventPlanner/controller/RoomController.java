@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.RoomDto;
 import com.EventPlanner.service.RoomService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class RoomController {
         return ResponseEntity.ok(roomDtoList);
     }
 
+    @GetMapping("/room/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedRoom(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = roomService.getAllPaginatedRoom(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/room/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class RoomController {
 
     @GetMapping("/room/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<RoomDto>> getAllRoomByName(@PathVariable String name) {
-        List<RoomDto> roomDtoList = roomService.searchByName(name);
-        return ResponseEntity.ok(roomDtoList);
+    public ResponseEntity<PaginationResponse> getAllRoomByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = roomService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/room/{id}")

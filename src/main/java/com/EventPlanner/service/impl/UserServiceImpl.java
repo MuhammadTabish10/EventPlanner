@@ -1,10 +1,15 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.TicketTypeDto;
 import com.EventPlanner.dto.UserDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.*;
 import com.EventPlanner.repository.*;
 import com.EventPlanner.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +81,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedUser(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<User> pageUser = userRepository.findAllInDesOrderByIdAndStatus(page);
+        List<User> userList = pageUser.getContent();
+
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : userList) {
+            UserDto userDto = toDto(user);
+            userDtoList.add(userDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(userDtoList);
+        paginationResponse.setPageNumber(pageUser.getNumber());
+        paginationResponse.setPageSize(pageUser.getSize());
+        paginationResponse.setTotalElements(pageUser.getNumberOfElements());
+        paginationResponse.setTotalPages(pageUser.getTotalPages());
+        paginationResponse.setLastPage(pageUser.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<User> pageUser = userRepository.findUserByName(name,page);
+        List<User> userList = pageUser.getContent();
+
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : userList) {
+            UserDto userDto = toDto(user);
+            userDtoList.add(userDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(userDtoList);
+        paginationResponse.setPageNumber(pageUser.getNumber());
+        paginationResponse.setPageSize(pageUser.getSize());
+        paginationResponse.setTotalElements(pageUser.getNumberOfElements());
+        paginationResponse.setTotalPages(pageUser.getTotalPages());
+        paginationResponse.setLastPage(pageUser.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public UserDto findById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
 
@@ -92,18 +143,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("User not found for name => %s", name)));
         return toDto(user);
-    }
-
-    @Override
-    public List<UserDto> searchByName(String name) {
-        List<User> userList = userRepository.findUserByName(name);
-        List<UserDto> userDtoList = new ArrayList<>();
-
-        for (User user : userList) {
-            UserDto userDto = toDto(user);
-            userDtoList.add(userDto);
-        }
-        return userDtoList;
     }
 
     @Override

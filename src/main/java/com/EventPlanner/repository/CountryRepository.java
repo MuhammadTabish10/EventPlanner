@@ -1,6 +1,9 @@
 package com.EventPlanner.repository;
 
+import com.EventPlanner.model.Contact;
 import com.EventPlanner.model.Country;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +16,16 @@ import java.util.Optional;
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
     Optional<Country> findByName(String name);
-    @Query("SELECT con FROM Country con WHERE con.name LIKE %:searchName% AND con.status = true")
-    List<Country> findCountriesByName(@Param("searchName") String searchName);
+
     @Modifying
     @Query("UPDATE Country con SET con.status = false WHERE con.id = :id")
     void setStatusInactive(@Param("id") Long id);
     @Query("SELECT c FROM Country c WHERE c.status = true ORDER BY c.id DESC")
     List<Country> findAllInDesOrderByIdAndStatus();
+
+    @Query("SELECT c FROM Country c WHERE c.status = true ORDER BY c.id DESC")
+    Page<Country> findAllInDesOrderByIdAndStatus(Pageable page);
+
+    @Query("SELECT con FROM Country con WHERE con.name LIKE %:searchName% AND con.status = true")
+    Page<Country> findCountryByName(@Param("searchName") String searchName, Pageable page);
 }

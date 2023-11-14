@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.CompanyDto;
 import com.EventPlanner.dto.CompanyTypeDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Company;
 import com.EventPlanner.model.CompanyType;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.CompanyTypeRepository;
 import com.EventPlanner.service.CompanyTypeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +56,52 @@ public class CompanyTypeServiceImpl implements CompanyTypeService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedCompanyType(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<CompanyType> pageCompanyType = companyTypeRepository.findAllInDesOrderByIdAndStatus(page);
+        List<CompanyType> companyTypeList = pageCompanyType.getContent();
+
+        List<CompanyTypeDto> companyTypeDtoList = new ArrayList<>();
+        for (CompanyType companyType : companyTypeList) {
+            CompanyTypeDto companyTypeDto = toDto(companyType);
+            companyTypeDtoList.add(companyTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(companyTypeDtoList);
+        paginationResponse.setPageNumber(pageCompanyType.getNumber());
+        paginationResponse.setPageSize(pageCompanyType.getSize());
+        paginationResponse.setTotalElements(pageCompanyType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCompanyType.getTotalPages());
+        paginationResponse.setLastPage(pageCompanyType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByType(String type, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<CompanyType> pageCompanyType = companyTypeRepository.findCompanyTypeByType(type,page);
+        List<CompanyType> companyTypeList = pageCompanyType.getContent();
+
+        List<CompanyTypeDto> companyTypeDtoList = new ArrayList<>();
+        for (CompanyType companyType : companyTypeList) {
+            CompanyTypeDto companyTypeDto = toDto(companyType);
+            companyTypeDtoList.add(companyTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(companyTypeDtoList);
+        paginationResponse.setPageNumber(pageCompanyType.getNumber());
+        paginationResponse.setPageSize(pageCompanyType.getSize());
+        paginationResponse.setTotalElements(pageCompanyType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCompanyType.getTotalPages());
+        paginationResponse.setLastPage(pageCompanyType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public CompanyTypeDto findById(Long id) {
         CompanyType companyType = companyTypeRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("CompanyType not found for id => %d", id)));
@@ -61,18 +113,6 @@ public class CompanyTypeServiceImpl implements CompanyTypeService {
         CompanyType companyType = companyTypeRepository.findByType(type)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("CompanyType not found for type => %s", type)));
         return toDto(companyType);
-    }
-
-    @Override
-    public List<CompanyTypeDto> searchByType(String type) {
-        List<CompanyType> companyTypeList = companyTypeRepository.findCompanyTypeByType(type);
-        List<CompanyTypeDto> companyTypeDtoList = new ArrayList<>();
-
-        for (CompanyType companyType : companyTypeList) {
-            CompanyTypeDto companyTypeDto = toDto(companyType);
-            companyTypeDtoList.add(companyTypeDto);
-        }
-        return companyTypeDtoList;
     }
 
     @Override

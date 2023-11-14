@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.IndustryDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.IndustryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class IndustryController {
         return ResponseEntity.ok(industryDtoList);
     }
 
+    @GetMapping("/industry/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedIndustry(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = industryService.getAllPaginatedIndustry(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/industry/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<IndustryDto> getIndustryById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class IndustryController {
 
     @GetMapping("/industry/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<IndustryDto>> getAllIndustryByName(@PathVariable String name) {
-        List<IndustryDto> industryDtoList = industryService.searchByName(name);
-        return ResponseEntity.ok(industryDtoList);
+    public ResponseEntity<PaginationResponse> getAllIndustryByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = industryService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/industry/{id}")

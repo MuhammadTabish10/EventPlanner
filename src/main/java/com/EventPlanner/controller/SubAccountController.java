@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.SubAccountDto;
 import com.EventPlanner.service.SubAccountService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class SubAccountController {
         return ResponseEntity.ok(subAccountDtoList);
     }
 
+    @GetMapping("/sub-account/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedSubAccount(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = subAccountService.getAllPaginatedSubAccount(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/sub-account/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<SubAccountDto> getSubAccountById(@PathVariable Long id) {
@@ -47,10 +58,15 @@ public class SubAccountController {
 
     @GetMapping("/sub-account/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<SubAccountDto>> getAllSubAccountsByName(@PathVariable String name) {
-        List<SubAccountDto> subAccountDtoList = subAccountService.searchByName(name);
-        return ResponseEntity.ok(subAccountDtoList);
+    public ResponseEntity<PaginationResponse> getAllSubAccountsByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = subAccountService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
+
 
     @DeleteMapping("/sub-account/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

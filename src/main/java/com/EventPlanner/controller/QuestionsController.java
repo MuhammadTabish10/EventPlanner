@@ -1,6 +1,6 @@
 package com.EventPlanner.controller;
 
-import com.EventPlanner.dto.ProvinceDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.QuestionsDto;
 import com.EventPlanner.service.QuestionsService;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +32,16 @@ public class QuestionsController {
         return ResponseEntity.ok(questionsDtoList);
     }
 
+    @GetMapping("/questions/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedQuestions(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = questionsService.getAllPaginatedQuestion(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/question/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<QuestionsDto> getQuestionsById(@PathVariable Long id) {
@@ -48,9 +58,13 @@ public class QuestionsController {
 
     @GetMapping("/questions/questions/{question}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<QuestionsDto>> getAllQuestionsByQuestion(@PathVariable String question) {
-        List<QuestionsDto> questionsDtoList = questionsService.searchByQuestion(question);
-        return ResponseEntity.ok(questionsDtoList);
+    public ResponseEntity<PaginationResponse> getAllQuestionsByQuestion(
+            @PathVariable String question,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = questionsService.searchByQuestion(question, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/questions/{id}")

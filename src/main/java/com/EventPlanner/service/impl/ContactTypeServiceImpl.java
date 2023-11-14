@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.ContactDto;
 import com.EventPlanner.dto.ContactTypeDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Contact;
 import com.EventPlanner.model.ContactType;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.ContactTypeRepository;
 import com.EventPlanner.service.ContactTypeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +56,52 @@ public class ContactTypeServiceImpl implements ContactTypeService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedContactType(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<ContactType> pageContactType = contactTypeRepository.findAllInDesOrderByIdAndStatus(page);
+        List<ContactType> contactTypeList = pageContactType.getContent();
+
+        List<ContactTypeDto> contactTypeDtoList = new ArrayList<>();
+        for (ContactType contactType : contactTypeList) {
+            ContactTypeDto contactTypeDto = toDto(contactType);
+            contactTypeDtoList.add(contactTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(contactTypeDtoList);
+        paginationResponse.setPageNumber(pageContactType.getNumber());
+        paginationResponse.setPageSize(pageContactType.getSize());
+        paginationResponse.setTotalElements(pageContactType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageContactType.getTotalPages());
+        paginationResponse.setLastPage(pageContactType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByType(String type, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<ContactType> pageContactType = contactTypeRepository.findContactTypeByType(type,page);
+        List<ContactType> contactTypeList = pageContactType.getContent();
+
+        List<ContactTypeDto> contactTypeDtoList = new ArrayList<>();
+        for (ContactType contactType : contactTypeList) {
+            ContactTypeDto contactTypeDto = toDto(contactType);
+            contactTypeDtoList.add(contactTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(contactTypeDtoList);
+        paginationResponse.setPageNumber(pageContactType.getNumber());
+        paginationResponse.setPageSize(pageContactType.getSize());
+        paginationResponse.setTotalElements(pageContactType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageContactType.getTotalPages());
+        paginationResponse.setLastPage(pageContactType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public ContactTypeDto findById(Long id) {
         ContactType contactType = contactTypeRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("ContactType not found for id => %d", id)));
@@ -61,18 +113,6 @@ public class ContactTypeServiceImpl implements ContactTypeService {
         ContactType contactType = contactTypeRepository.findByType(type)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("ContactType not found for name => %s", type)));
         return toDto(contactType);
-    }
-
-    @Override
-    public List<ContactTypeDto> searchByType(String type) {
-        List<ContactType> contactTypeList = contactTypeRepository.findContactTypeByType(type);
-        List<ContactTypeDto> contactTypeDtoList = new ArrayList<>();
-
-        for (ContactType contactType : contactTypeList) {
-            ContactTypeDto contactTypeDto = toDto(contactType);
-            contactTypeDtoList.add(contactTypeDto);
-        }
-        return contactTypeDtoList;
     }
 
     @Override

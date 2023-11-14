@@ -1,10 +1,15 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.UserDto;
 import com.EventPlanner.dto.VenueDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.*;
 import com.EventPlanner.repository.*;
 import com.EventPlanner.service.VenueService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -73,6 +78,52 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedVenue(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Venue> pageVenue = venueRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Venue> venueList = pageVenue.getContent();
+
+        List<VenueDto> venueDtoList = new ArrayList<>();
+        for (Venue venue : venueList) {
+            VenueDto venueDto = toDto(venue);
+            venueDtoList.add(venueDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(venueDtoList);
+        paginationResponse.setPageNumber(pageVenue.getNumber());
+        paginationResponse.setPageSize(pageVenue.getSize());
+        paginationResponse.setTotalElements(pageVenue.getNumberOfElements());
+        paginationResponse.setTotalPages(pageVenue.getTotalPages());
+        paginationResponse.setLastPage(pageVenue.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Venue> pageVenue = venueRepository.findVenueByName(name,page);
+        List<Venue> venueList = pageVenue.getContent();
+
+        List<VenueDto> venueDtoList = new ArrayList<>();
+        for (Venue venue : venueList) {
+            VenueDto venueDto = toDto(venue);
+            venueDtoList.add(venueDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(venueDtoList);
+        paginationResponse.setPageNumber(pageVenue.getNumber());
+        paginationResponse.setPageSize(pageVenue.getSize());
+        paginationResponse.setTotalElements(pageVenue.getNumberOfElements());
+        paginationResponse.setTotalPages(pageVenue.getTotalPages());
+        paginationResponse.setLastPage(pageVenue.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public VenueDto findById(Long id) {
         Venue venue = venueRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Venue not found for id => %d", id)));
@@ -84,18 +135,6 @@ public class VenueServiceImpl implements VenueService {
         Venue venue = venueRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Venue not found for name => %s", name)));
         return toDto(venue);
-    }
-
-    @Override
-    public List<VenueDto> searchByName(String name) {
-        List<Venue> venueList = venueRepository.findVenueByName(name);
-        List<VenueDto> venueDtoList = new ArrayList<>();
-
-        for (Venue venue : venueList) {
-            VenueDto venueDto = toDto(venue);
-            venueDtoList.add(venueDto);
-        }
-        return venueDtoList;
     }
 
     @Override

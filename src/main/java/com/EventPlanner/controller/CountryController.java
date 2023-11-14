@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.CountryDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.CountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class CountryController {
         return ResponseEntity.ok(countryDtoList);
     }
 
+    @GetMapping("/country/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedCountry(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = countryService.getAllPaginatedCountry(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/country/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CountryDto> getCountryById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class CountryController {
 
     @GetMapping("/country/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<CountryDto>> getAllCountryByName(@PathVariable String name) {
-        List<CountryDto> countryDtoList = countryService.searchByName(name);
-        return ResponseEntity.ok(countryDtoList);
+    public ResponseEntity<PaginationResponse> getAllCountryByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = countryService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/country/{id}")

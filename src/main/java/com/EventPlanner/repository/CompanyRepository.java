@@ -1,6 +1,9 @@
 package com.EventPlanner.repository;
 
+import com.EventPlanner.model.Account;
 import com.EventPlanner.model.Company;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +26,10 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("SELECT c FROM Company c WHERE c.status = true ORDER BY c.id DESC")
     List<Company> findAllInDesOrderByIdAndStatus();
+
+    @Query("SELECT c FROM Company c WHERE c.status = true ORDER BY c.id DESC")
+    Page<Company> findAllInDesOrderByIdAndStatus(Pageable page);
+
+    @Query("SELECT c FROM Company c WHERE c.name LIKE %:searchName% AND c.status = true")
+    Page<Company> findCompanyByName(@Param("searchName") String searchName, Pageable page);
 }

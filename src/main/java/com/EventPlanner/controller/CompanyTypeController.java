@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.CompanyTypeDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.CompanyTypeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,17 @@ public class CompanyTypeController {
         return ResponseEntity.ok(companyTypeDtoList);
     }
 
+    @GetMapping("/company-type/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedCompanyType(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = companyTypeService.getAllPaginatedCompanyType(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
+
     @GetMapping("/company-type/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CompanyTypeDto> getCompanyTypeById(@PathVariable Long id) {
@@ -47,9 +59,13 @@ public class CompanyTypeController {
 
     @GetMapping("/company-type/types/{type}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<CompanyTypeDto>> getAllCompanyTypeByType(@PathVariable String type) {
-        List<CompanyTypeDto> companyTypeDtoList = companyTypeService.searchByType(type);
-        return ResponseEntity.ok(companyTypeDtoList);
+    public ResponseEntity<PaginationResponse> getAllCompanyTypeByType(
+            @PathVariable String type,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = companyTypeService.searchByType(type, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/company-type/{id}")

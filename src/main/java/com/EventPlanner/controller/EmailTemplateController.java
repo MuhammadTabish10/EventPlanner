@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.EmailTemplateDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.EmailTemplateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class EmailTemplateController {
         return ResponseEntity.ok(emailTemplateDtoList);
     }
 
+    @GetMapping("/email-template/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedEmailTemplate(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = emailTemplateService.getAllPaginatedEmailTemplate(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/email-template/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<EmailTemplateDto> getEmailTemplateById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class EmailTemplateController {
 
     @GetMapping("/email-template/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<EmailTemplateDto>> getAllEmailTemplatesByName(@PathVariable String name) {
-        List<EmailTemplateDto> emailTemplateDtoList = emailTemplateService.searchByName(name);
-        return ResponseEntity.ok(emailTemplateDtoList);
+    public ResponseEntity<PaginationResponse> getAllEmailTemplatesByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = emailTemplateService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/email-template/{id}")

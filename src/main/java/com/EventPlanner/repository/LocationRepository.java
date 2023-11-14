@@ -1,6 +1,9 @@
 package com.EventPlanner.repository;
 
+import com.EventPlanner.model.EventType;
 import com.EventPlanner.model.Location;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +19,6 @@ public interface LocationRepository extends JpaRepository<Location,Long> {
     void setStatusInactive(@Param("id") Long id);
     @Query("SELECT lo FROM Location lo WHERE lo.status = true ORDER BY lo.id DESC")
     List<Location> findAllInDesOrderByIdAndStatus();
+    @Query("SELECT lo FROM Location lo WHERE lo.status = true ORDER BY lo.id DESC")
+    Page<Location> findAllInDesOrderByIdAndStatus(Pageable page);
 }

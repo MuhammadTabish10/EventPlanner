@@ -1,16 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.ContactTypeDto;
 import com.EventPlanner.dto.EventDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
-import com.EventPlanner.model.Account;
-import com.EventPlanner.model.Event;
-import com.EventPlanner.model.EventType;
-import com.EventPlanner.model.Venue;
+import com.EventPlanner.model.*;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.EventRepository;
 import com.EventPlanner.repository.EventTypeRepository;
 import com.EventPlanner.repository.VenueRepository;
 import com.EventPlanner.service.EventService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -66,6 +68,52 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedEvent(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Event> pageEvent = eventRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Event> eventList = pageEvent.getContent();
+
+        List<EventDto> eventDtoList = new ArrayList<>();
+        for (Event event : eventList) {
+            EventDto eventDto = toDto(event);
+            eventDtoList.add(eventDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(eventDtoList);
+        paginationResponse.setPageNumber(pageEvent.getNumber());
+        paginationResponse.setPageSize(pageEvent.getSize());
+        paginationResponse.setTotalElements(pageEvent.getNumberOfElements());
+        paginationResponse.setTotalPages(pageEvent.getTotalPages());
+        paginationResponse.setLastPage(pageEvent.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Event> pageEvent = eventRepository.findEventByName(name,page);
+        List<Event> eventList = pageEvent.getContent();
+
+        List<EventDto> eventDtoList = new ArrayList<>();
+        for (Event event : eventList) {
+            EventDto eventDto = toDto(event);
+            eventDtoList.add(eventDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(eventDtoList);
+        paginationResponse.setPageNumber(pageEvent.getNumber());
+        paginationResponse.setPageSize(pageEvent.getSize());
+        paginationResponse.setTotalElements(pageEvent.getNumberOfElements());
+        paginationResponse.setTotalPages(pageEvent.getTotalPages());
+        paginationResponse.setLastPage(pageEvent.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public EventDto findById(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Event not found for id => %d", id)));
@@ -77,18 +125,6 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Event not found for name => %s", name)));
         return toDto(event);
-    }
-
-    @Override
-    public List<EventDto> searchByName(String name) {
-        List<Event> eventList = eventRepository.findEventByName(name);
-        List<EventDto> eventDtoList = new ArrayList<>();
-
-        for (Event event : eventList) {
-            EventDto eventDto = toDto(event);
-            eventDtoList.add(eventDto);
-        }
-        return eventDtoList;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.dto.UserDto;
 import com.EventPlanner.service.UserService;
@@ -33,6 +34,16 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @GetMapping("/user/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedUser(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = userService.getAllPaginatedUser(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/user/name/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
@@ -42,9 +53,13 @@ public class UserController {
 
     @GetMapping("/user/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDto>> getAllUserByName(@PathVariable String name) {
-        List<UserDto> userDtoList = userService.searchByName(name);
-        return ResponseEntity.ok(userDtoList);
+    public ResponseEntity<PaginationResponse> getAllUserByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = userService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/user/{id}")

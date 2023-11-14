@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.RoomDto;
 import com.EventPlanner.dto.SponsorTypeDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Room;
 import com.EventPlanner.model.SponsorType;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.SponsorTypeRepository;
 import com.EventPlanner.service.SponsorTypeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +56,52 @@ public class SponsorTypeServiceImpl implements SponsorTypeService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedSponsorType(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<SponsorType> pageSponsorType = sponsorTypeRepository.findAllInDesOrderByIdAndStatus(page);
+        List<SponsorType> sponsorTypeList = pageSponsorType.getContent();
+
+        List<SponsorTypeDto> sponsorTypeDtoList = new ArrayList<>();
+        for (SponsorType sponsorType : sponsorTypeList) {
+            SponsorTypeDto sponsorTypeDto = toDto(sponsorType);
+            sponsorTypeDtoList.add(sponsorTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(sponsorTypeDtoList);
+        paginationResponse.setPageNumber(pageSponsorType.getNumber());
+        paginationResponse.setPageSize(pageSponsorType.getSize());
+        paginationResponse.setTotalElements(pageSponsorType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageSponsorType.getTotalPages());
+        paginationResponse.setLastPage(pageSponsorType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByType(String type, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<SponsorType> pageSponsorType = sponsorTypeRepository.findSponsorTypeByType(type,page);
+        List<SponsorType> sponsorTypeList = pageSponsorType.getContent();
+
+        List<SponsorTypeDto> sponsorTypeDtoList = new ArrayList<>();
+        for (SponsorType sponsorType : sponsorTypeList) {
+            SponsorTypeDto sponsorTypeDto = toDto(sponsorType);
+            sponsorTypeDtoList.add(sponsorTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(sponsorTypeDtoList);
+        paginationResponse.setPageNumber(pageSponsorType.getNumber());
+        paginationResponse.setPageSize(pageSponsorType.getSize());
+        paginationResponse.setTotalElements(pageSponsorType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageSponsorType.getTotalPages());
+        paginationResponse.setLastPage(pageSponsorType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public SponsorTypeDto findById(Long id) {
         SponsorType sponsorType = sponsorTypeRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Sponsor Type not found for id => %d", id)));
@@ -61,18 +113,6 @@ public class SponsorTypeServiceImpl implements SponsorTypeService {
         SponsorType sponsorType = sponsorTypeRepository.findByType(type)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Sponsor Type not found for type => %s", type)));
         return toDto(sponsorType);
-    }
-
-    @Override
-    public List<SponsorTypeDto> searchByType(String type) {
-        List<SponsorType> sponsorTypeList = sponsorTypeRepository.findSponsorTypeByType(type);
-        List<SponsorTypeDto> sponsorTypeDtoList = new ArrayList<>();
-
-        for (SponsorType sponsorType : sponsorTypeList) {
-            SponsorTypeDto sponsorTypeDto = toDto(sponsorType);
-            sponsorTypeDtoList.add(sponsorTypeDto);
-        }
-        return sponsorTypeDtoList;
     }
 
     @Override

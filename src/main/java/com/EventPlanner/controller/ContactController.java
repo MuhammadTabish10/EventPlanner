@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.ContactDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.ContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,16 @@ public class ContactController {
         return ResponseEntity.ok(contactDtoList);
     }
 
+    @GetMapping("/contact/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedContact(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = contactService.getAllPaginatedContact(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/contact/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ContactDto> getContactById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class ContactController {
 
     @GetMapping("/contact/customers/{customer}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ContactDto>> getAllContactCustomersByCustomers(@PathVariable String customer) {
-        List<ContactDto> contactDtoList = contactService.searchByCustomer(customer);
-        return ResponseEntity.ok(contactDtoList);
+    public ResponseEntity<PaginationResponse> getAllContactCustomersByCustomers(
+            @PathVariable String customer,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = contactService.searchByCustomer(customer, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/contact/{id}")

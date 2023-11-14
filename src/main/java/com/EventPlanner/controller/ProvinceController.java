@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.ProvinceDto;
 import com.EventPlanner.service.ProvinceService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class ProvinceController {
         return ResponseEntity.ok(provinceDtoList);
     }
 
+    @GetMapping("/province/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedProvince(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = provinceService.getAllPaginatedProvince(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/province/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ProvinceDto> getProvinceById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class ProvinceController {
 
     @GetMapping("/province/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ProvinceDto>> getAllProvinceByName(@PathVariable String name) {
-        List<ProvinceDto> provinceDtoList = provinceService.searchByName(name);
-        return ResponseEntity.ok(provinceDtoList);
+    public ResponseEntity<PaginationResponse> getAllProvinceByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = provinceService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/province/{id}")

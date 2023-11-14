@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.dto.VenueDto;
 import com.EventPlanner.service.VenueService;
@@ -32,6 +33,16 @@ public class VenueController {
         return ResponseEntity.ok(venueDtoList);
     }
 
+    @GetMapping("/venue/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedVenue(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = venueService.getAllPaginatedVenue(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/venue/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<VenueDto> getVenueById(@PathVariable Long id) {
@@ -48,9 +59,13 @@ public class VenueController {
 
     @GetMapping("/venue/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<VenueDto>> getAllVenueByName(@PathVariable String name) {
-        List<VenueDto> venueDtoList = venueService.searchByName(name);
-        return ResponseEntity.ok(venueDtoList);
+    public ResponseEntity<PaginationResponse> getAllVenueByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = venueService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/venue/{id}")

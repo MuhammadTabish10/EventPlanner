@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.EventDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +33,16 @@ public class EventController {
         return ResponseEntity.ok(eventDtoList);
     }
 
+    @GetMapping("/event/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedEvent(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = eventService.getAllPaginatedEvent(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/event/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
@@ -48,9 +59,13 @@ public class EventController {
 
     @GetMapping("/event/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<EventDto>> getAllEventByName(@PathVariable String name) {
-        List<EventDto> eventDtoList = eventService.searchByName(name);
-        return ResponseEntity.ok(eventDtoList);
+    public ResponseEntity<PaginationResponse> getAllEventByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = eventService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/event/{id}")

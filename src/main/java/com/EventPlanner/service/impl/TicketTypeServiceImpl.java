@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.dto.TicketTypeDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Tag;
 import com.EventPlanner.model.TicketType;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.TicketTypeRepository;
 import com.EventPlanner.service.TicketTypeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +56,52 @@ public class TicketTypeServiceImpl implements TicketTypeService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedTicketType(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<TicketType> pageTicketType = ticketTypeRepository.findAllInDesOrderByIdAndStatus(page);
+        List<TicketType> ticketTypeList = pageTicketType.getContent();
+
+        List<TicketTypeDto> ticketTypeDtoList = new ArrayList<>();
+        for (TicketType ticketType : ticketTypeList) {
+            TicketTypeDto ticketTypeDto = toDto(ticketType);
+            ticketTypeDtoList.add(ticketTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(ticketTypeDtoList);
+        paginationResponse.setPageNumber(pageTicketType.getNumber());
+        paginationResponse.setPageSize(pageTicketType.getSize());
+        paginationResponse.setTotalElements(pageTicketType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageTicketType.getTotalPages());
+        paginationResponse.setLastPage(pageTicketType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByType(String type, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<TicketType> pageTicketType = ticketTypeRepository.findTicketTypeByType(type,page);
+        List<TicketType> ticketTypeList = pageTicketType.getContent();
+
+        List<TicketTypeDto> ticketTypeDtoList = new ArrayList<>();
+        for (TicketType ticketType : ticketTypeList) {
+            TicketTypeDto ticketTypeDto = toDto(ticketType);
+            ticketTypeDtoList.add(ticketTypeDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(ticketTypeDtoList);
+        paginationResponse.setPageNumber(pageTicketType.getNumber());
+        paginationResponse.setPageSize(pageTicketType.getSize());
+        paginationResponse.setTotalElements(pageTicketType.getNumberOfElements());
+        paginationResponse.setTotalPages(pageTicketType.getTotalPages());
+        paginationResponse.setLastPage(pageTicketType.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public TicketTypeDto findById(Long id) {
         TicketType ticketType = ticketTypeRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Ticket Type not found for id => %d", id)));
@@ -61,18 +113,6 @@ public class TicketTypeServiceImpl implements TicketTypeService {
         TicketType ticketType = ticketTypeRepository.findByType(type)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Ticket Type not found for type => %s", type)));
         return toDto(ticketType);
-    }
-
-    @Override
-    public List<TicketTypeDto> searchByType(String type) {
-        List<TicketType> ticketTypeList = ticketTypeRepository.findTicketTypeByType(type);
-        List<TicketTypeDto> ticketTypeDtoList = new ArrayList<>();
-
-        for (TicketType ticketType : ticketTypeList) {
-            TicketTypeDto ticketTypeDto = toDto(ticketType);
-            ticketTypeDtoList.add(ticketTypeDto);
-        }
-        return ticketTypeDtoList;
     }
 
     @Override

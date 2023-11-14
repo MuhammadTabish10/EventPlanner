@@ -1,10 +1,14 @@
 package com.EventPlanner.service.impl;
 
 import com.EventPlanner.dto.AccountDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
 import com.EventPlanner.repository.*;
 import com.EventPlanner.service.AccountService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -58,6 +62,52 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedAccounts(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Account> pageAccount = accountRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Account> accountList = pageAccount.getContent();
+
+        List<AccountDto> accountDtoList = new ArrayList<>();
+        for (Account account : accountList) {
+            AccountDto accountDto = toDto(account);
+            accountDtoList.add(accountDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(accountDtoList);
+        paginationResponse.setPageNumber(pageAccount.getNumber());
+        paginationResponse.setPageSize(pageAccount.getSize());
+        paginationResponse.setTotalElements(pageAccount.getNumberOfElements());
+        paginationResponse.setTotalPages(pageAccount.getTotalPages());
+        paginationResponse.setLastPage(pageAccount.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Account> pageAccount = accountRepository.findAccountsByName(name, page);
+        List<Account> accountList = pageAccount.getContent();
+
+        List<AccountDto> accountDtoList = new ArrayList<>();
+        for (Account account : accountList) {
+            AccountDto accountDto = toDto(account);
+            accountDtoList.add(accountDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(accountDtoList);
+        paginationResponse.setPageNumber(pageAccount.getNumber());
+        paginationResponse.setPageSize(pageAccount.getSize());
+        paginationResponse.setTotalElements(pageAccount.getNumberOfElements());
+        paginationResponse.setTotalPages(pageAccount.getTotalPages());
+        paginationResponse.setLastPage(pageAccount.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public AccountDto findById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for id => %d", id)));
@@ -69,18 +119,6 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Account not found for name => %s", name)));
         return toDto(account);
-    }
-
-    @Override
-    public List<AccountDto> searchByName(String name) {
-        List<Account> accounts = accountRepository.findAccountsByName(name);
-        List<AccountDto> accountDtoList = new ArrayList<>();
-
-        for (Account account : accounts) {
-            AccountDto accountDto = toDto(account);
-            accountDtoList.add(accountDto);
-        }
-        return accountDtoList;
     }
 
     @Override

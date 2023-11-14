@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.ContactTypeDto;
 import com.EventPlanner.dto.CountryDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
+import com.EventPlanner.model.ContactType;
 import com.EventPlanner.model.Country;
 import com.EventPlanner.model.Province;
 import com.EventPlanner.repository.CountryRepository;
 import com.EventPlanner.repository.ProvinceRepository;
 import com.EventPlanner.service.CountryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -55,6 +61,52 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedCountry(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Country> pageCountry = countryRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Country> countryList = pageCountry.getContent();
+
+        List<CountryDto> countryDtoList = new ArrayList<>();
+        for (Country country : countryList) {
+            CountryDto countryDto = toDto(country);
+            countryDtoList.add(countryDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(countryDtoList);
+        paginationResponse.setPageNumber(pageCountry.getNumber());
+        paginationResponse.setPageSize(pageCountry.getSize());
+        paginationResponse.setTotalElements(pageCountry.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCountry.getTotalPages());
+        paginationResponse.setLastPage(pageCountry.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Country> pageCountry = countryRepository.findCountryByName(name,page);
+        List<Country> countryList = pageCountry.getContent();
+
+        List<CountryDto> countryDtoList = new ArrayList<>();
+        for (Country country : countryList) {
+            CountryDto countryDto = toDto(country);
+            countryDtoList.add(countryDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(countryDtoList);
+        paginationResponse.setPageNumber(pageCountry.getNumber());
+        paginationResponse.setPageSize(pageCountry.getSize());
+        paginationResponse.setTotalElements(pageCountry.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCountry.getTotalPages());
+        paginationResponse.setLastPage(pageCountry.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public CountryDto findById(Long id) {
         Country country = countryRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for id => %d", id)));
@@ -66,18 +118,6 @@ public class CountryServiceImpl implements CountryService {
         Country country = countryRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Country not found for name => %s", name)));
         return toDto(country);
-    }
-
-    @Override
-    public List<CountryDto> searchByName(String name) {
-        List<Country> countryList = countryRepository.findCountriesByName(name);
-        List<CountryDto> countryDtoList = new ArrayList<>();
-
-        for (Country country : countryList) {
-            CountryDto countryDto = toDto(country);
-            countryDtoList.add(countryDto);
-        }
-        return countryDtoList;
     }
 
     @Override

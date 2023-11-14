@@ -1,10 +1,15 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.AccountDto;
 import com.EventPlanner.dto.CompanyDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.*;
 import com.EventPlanner.repository.*;
 import com.EventPlanner.service.CompanyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -79,6 +84,52 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedCompany(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Company> pageCompany = companyRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Company> companyList = pageCompany.getContent();
+
+        List<CompanyDto> companyDtoList = new ArrayList<>();
+        for (Company company : companyList) {
+            CompanyDto companyDto = toDto(company);
+            companyDtoList.add(companyDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(companyDtoList);
+        paginationResponse.setPageNumber(pageCompany.getNumber());
+        paginationResponse.setPageSize(pageCompany.getSize());
+        paginationResponse.setTotalElements(pageCompany.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCompany.getTotalPages());
+        paginationResponse.setLastPage(pageCompany.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Company> pageCompany = companyRepository.findCompanyByName(name,page);
+        List<Company> companyList = pageCompany.getContent();
+
+        List<CompanyDto> companyDtoList = new ArrayList<>();
+        for (Company company : companyList) {
+            CompanyDto companyDto = toDto(company);
+            companyDtoList.add(companyDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(companyDtoList);
+        paginationResponse.setPageNumber(pageCompany.getNumber());
+        paginationResponse.setPageSize(pageCompany.getSize());
+        paginationResponse.setTotalElements(pageCompany.getNumberOfElements());
+        paginationResponse.setTotalPages(pageCompany.getTotalPages());
+        paginationResponse.setLastPage(pageCompany.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public CompanyDto findById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Company not found for id => %d", id)));
@@ -90,18 +141,6 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Company not found for name => %s", name)));
         return toDto(company);
-    }
-
-    @Override
-    public List<CompanyDto> searchByName(String name) {
-        List<Company> companyList = companyRepository.findCompanyByName(name);
-        List<CompanyDto> companyDtoList = new ArrayList<>();
-
-        for (Company company : companyList) {
-            CompanyDto companyDto = toDto(company);
-            companyDtoList.add(companyDto);
-        }
-        return companyDtoList;
     }
 
     @Override

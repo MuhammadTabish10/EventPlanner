@@ -1,10 +1,15 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.CompanyTypeDto;
 import com.EventPlanner.dto.ContactDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.*;
 import com.EventPlanner.repository.*;
 import com.EventPlanner.service.ContactService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -66,6 +71,52 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedContact(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Contact> pageContact = contactRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Contact> contactList = pageContact.getContent();
+
+        List<ContactDto> contactDtoList = new ArrayList<>();
+        for (Contact contact : contactList) {
+            ContactDto contactDto = toDto(contact);
+            contactDtoList.add(contactDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(contactDtoList);
+        paginationResponse.setPageNumber(pageContact.getNumber());
+        paginationResponse.setPageSize(pageContact.getSize());
+        paginationResponse.setTotalElements(pageContact.getNumberOfElements());
+        paginationResponse.setTotalPages(pageContact.getTotalPages());
+        paginationResponse.setLastPage(pageContact.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByCustomer(String customer, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Contact> pageContact = contactRepository.findContactByCustomer(customer,page);
+        List<Contact> contactList = pageContact.getContent();
+
+        List<ContactDto> contactDtoList = new ArrayList<>();
+        for (Contact contact : contactList) {
+            ContactDto contactDto = toDto(contact);
+            contactDtoList.add(contactDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(contactDtoList);
+        paginationResponse.setPageNumber(pageContact.getNumber());
+        paginationResponse.setPageSize(pageContact.getSize());
+        paginationResponse.setTotalElements(pageContact.getNumberOfElements());
+        paginationResponse.setTotalPages(pageContact.getTotalPages());
+        paginationResponse.setLastPage(pageContact.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public ContactDto findById(Long id) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Contact not found for id => %d", id)));
@@ -77,18 +128,6 @@ public class ContactServiceImpl implements ContactService {
         Contact contact = contactRepository.findByCustomer(customer)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Customer not found for name => %s", customer)));
         return toDto(contact);
-    }
-
-    @Override
-    public List<ContactDto> searchByCustomer(String customer) {
-        List<Contact> contactList = contactRepository.findContactByCustomer(customer);
-        List<ContactDto> contactDtoList = new ArrayList<>();
-
-        for (Contact contact : contactList) {
-            ContactDto contactDto = toDto(contact);
-            contactDtoList.add(contactDto);
-        }
-        return contactDtoList;
     }
 
     @Override

@@ -1,14 +1,20 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.SponsorTypeDto;
 import com.EventPlanner.dto.SubAccountDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
 import com.EventPlanner.model.Location;
+import com.EventPlanner.model.SponsorType;
 import com.EventPlanner.model.SubAccount;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.LocationRepository;
 import com.EventPlanner.repository.SubAccountRepository;
 import com.EventPlanner.service.SubAccountService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -62,6 +68,52 @@ public class SubAccountServiceImpl implements SubAccountService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedSubAccount(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<SubAccount> pageSubAccount = subAccountRepository.findAllInDesOrderByIdAndStatus(page);
+        List<SubAccount> subAccountList = pageSubAccount.getContent();
+
+        List<SubAccountDto> subAccountDtoList = new ArrayList<>();
+        for (SubAccount subAccount : subAccountList) {
+            SubAccountDto subAccountDto = toDto(subAccount);
+            subAccountDtoList.add(subAccountDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(subAccountDtoList);
+        paginationResponse.setPageNumber(pageSubAccount.getNumber());
+        paginationResponse.setPageSize(pageSubAccount.getSize());
+        paginationResponse.setTotalElements(pageSubAccount.getNumberOfElements());
+        paginationResponse.setTotalPages(pageSubAccount.getTotalPages());
+        paginationResponse.setLastPage(pageSubAccount.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<SubAccount> pageSubAccount = subAccountRepository.findSubAccountByName(name,page);
+        List<SubAccount> subAccountList = pageSubAccount.getContent();
+
+        List<SubAccountDto> subAccountDtoList = new ArrayList<>();
+        for (SubAccount subAccount : subAccountList) {
+            SubAccountDto subAccountDto = toDto(subAccount);
+            subAccountDtoList.add(subAccountDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(subAccountDtoList);
+        paginationResponse.setPageNumber(pageSubAccount.getNumber());
+        paginationResponse.setPageSize(pageSubAccount.getSize());
+        paginationResponse.setTotalElements(pageSubAccount.getNumberOfElements());
+        paginationResponse.setTotalPages(pageSubAccount.getTotalPages());
+        paginationResponse.setLastPage(pageSubAccount.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public SubAccountDto findById(Long id) {
         SubAccount subAccount = subAccountRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for Id => %d", id)));
@@ -73,18 +125,6 @@ public class SubAccountServiceImpl implements SubAccountService {
         SubAccount subAccount = subAccountRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("SubAccount not found for name => %s", name)));
         return toDto(subAccount);
-    }
-
-    @Override
-    public List<SubAccountDto> searchByName(String name) {
-        List<SubAccount> subAccountList = subAccountRepository.findSubAccountByName(name);
-        List<SubAccountDto> subAccountDtoList = new ArrayList<>();
-
-        for (SubAccount subAccount : subAccountList) {
-            SubAccountDto subAccountDto = toDto(subAccount);
-            subAccountDtoList.add(subAccountDto);
-        }
-        return subAccountDtoList;
     }
 
     @Override
@@ -118,6 +158,7 @@ public class SubAccountServiceImpl implements SubAccountService {
     public SubAccountDto toDto(SubAccount subAccount) {
         return SubAccountDto.builder()
                 .id(subAccount.getId())
+                .name(subAccount.getName())
                 .createdAt(subAccount.getCreatedAt())
                 .phone(subAccount.getPhone())
                 .website(subAccount.getWebsite())
@@ -130,6 +171,7 @@ public class SubAccountServiceImpl implements SubAccountService {
     public SubAccount toEntity(SubAccountDto subAccountDto) {
         return SubAccount.builder()
                 .id(subAccountDto.getId())
+                .name(subAccountDto.getName())
                 .createdAt(subAccountDto.getCreatedAt())
                 .phone(subAccountDto.getPhone())
                 .website(subAccountDto.getWebsite())

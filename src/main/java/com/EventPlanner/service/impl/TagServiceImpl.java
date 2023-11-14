@@ -1,10 +1,16 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.SubAccountDto;
 import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.exception.RecordNotFoundException;
+import com.EventPlanner.model.SubAccount;
 import com.EventPlanner.model.Tag;
 import com.EventPlanner.repository.TagRepository;
 import com.EventPlanner.service.TagService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -42,6 +48,52 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedTag(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Tag> pageTag = tagRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Tag> tagList = pageTag.getContent();
+
+        List<TagDto> tagDtoList = new ArrayList<>();
+        for (Tag tag : tagList) {
+            TagDto tagDto = toDto(tag);
+            tagDtoList.add(tagDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(tagDtoList);
+        paginationResponse.setPageNumber(pageTag.getNumber());
+        paginationResponse.setPageSize(pageTag.getSize());
+        paginationResponse.setTotalElements(pageTag.getNumberOfElements());
+        paginationResponse.setTotalPages(pageTag.getTotalPages());
+        paginationResponse.setLastPage(pageTag.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Tag> pageTag = tagRepository.findTagByName(name,page);
+        List<Tag> tagList = pageTag.getContent();
+
+        List<TagDto> tagDtoList = new ArrayList<>();
+        for (Tag tag : tagList) {
+            TagDto tagDto = toDto(tag);
+            tagDtoList.add(tagDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(tagDtoList);
+        paginationResponse.setPageNumber(pageTag.getNumber());
+        paginationResponse.setPageSize(pageTag.getSize());
+        paginationResponse.setTotalElements(pageTag.getNumberOfElements());
+        paginationResponse.setTotalPages(pageTag.getTotalPages());
+        paginationResponse.setLastPage(pageTag.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public TagDto findById(Long id) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Tag not found for id => %d", id)));
@@ -53,18 +105,6 @@ public class TagServiceImpl implements TagService {
         Tag tag = tagRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Tag not found for name => %s", name)));
         return toDto(tag);
-    }
-
-    @Override
-    public List<TagDto> searchByName(String name) {
-        List<Tag> tagList = tagRepository.findTagByName(name);
-        List<TagDto> tagDtoList = new ArrayList<>();
-
-        for (Tag tag : tagList) {
-            TagDto tagDto = toDto(tag);
-            tagDtoList.add(tagDto);
-        }
-        return tagDtoList;
     }
 
     @Override

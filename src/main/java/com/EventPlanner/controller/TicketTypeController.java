@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.TicketTypeDto;
 import com.EventPlanner.service.TicketTypeService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class TicketTypeController {
         return ResponseEntity.ok(ticketTypeDtoList);
     }
 
+    @GetMapping("/ticket-type/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedTicketType(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = ticketTypeService.getAllPaginatedTicketType(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/ticket-type/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<TicketTypeDto> getTicketTypeById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class TicketTypeController {
 
     @GetMapping("/ticket-type/types/{type}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<TicketTypeDto>> getAllTicketTypeByType(@PathVariable String type) {
-        List<TicketTypeDto> ticketTypeDtoList = ticketTypeService.searchByType(type);
-        return ResponseEntity.ok(ticketTypeDtoList);
+    public ResponseEntity<PaginationResponse> getAllTicketTypeByType(
+            @PathVariable String type,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = ticketTypeService.searchByType(type, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/ticket-type/{id}")

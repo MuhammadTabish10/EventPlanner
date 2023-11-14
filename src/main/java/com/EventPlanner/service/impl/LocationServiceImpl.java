@@ -1,14 +1,20 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.IndustryDto;
 import com.EventPlanner.dto.LocationDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Country;
+import com.EventPlanner.model.Industry;
 import com.EventPlanner.model.Location;
 import com.EventPlanner.model.Province;
 import com.EventPlanner.repository.CountryRepository;
 import com.EventPlanner.repository.LocationRepository;
 import com.EventPlanner.repository.ProvinceRepository;
 import com.EventPlanner.service.LocationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -57,6 +63,29 @@ public class LocationServiceImpl implements LocationService {
             locationDtoList.add(locationDto);
         }
         return locationDtoList;
+    }
+
+    @Override
+    public PaginationResponse getAllPaginatedLocation(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Location> pageLocation = locationRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Location> locationList = pageLocation.getContent();
+
+        List<LocationDto> locationDtoList = new ArrayList<>();
+        for (Location location : locationList) {
+            LocationDto locationDto = toDto(location);
+            locationDtoList.add(locationDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(locationDtoList);
+        paginationResponse.setPageNumber(pageLocation.getNumber());
+        paginationResponse.setPageSize(pageLocation.getSize());
+        paginationResponse.setTotalElements(pageLocation.getNumberOfElements());
+        paginationResponse.setTotalPages(pageLocation.getTotalPages());
+        paginationResponse.setLastPage(pageLocation.isLast());
+
+        return paginationResponse;
     }
 
     @Override

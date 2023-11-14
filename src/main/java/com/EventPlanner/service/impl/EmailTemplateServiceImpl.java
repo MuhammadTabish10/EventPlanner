@@ -1,14 +1,20 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.ContactTypeDto;
 import com.EventPlanner.dto.EmailTemplateDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.ContactType;
 import com.EventPlanner.model.EmailTemplate;
 import com.EventPlanner.model.SubAccount;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.EmailTemplateRepository;
 import com.EventPlanner.repository.SubAccountRepository;
 import com.EventPlanner.service.EmailTemplateService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -60,6 +66,52 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedEmailTemplate(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<EmailTemplate> pageEmailTemplate = emailTemplateRepository.findAllInDesOrderByIdAndStatus(page);
+        List<EmailTemplate> emailTemplateList = pageEmailTemplate.getContent();
+
+        List<EmailTemplateDto> emailTemplateDtoList = new ArrayList<>();
+        for (EmailTemplate emailTemplate : emailTemplateList) {
+            EmailTemplateDto emailTemplateDto = toDto(emailTemplate);
+            emailTemplateDtoList.add(emailTemplateDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(emailTemplateDtoList);
+        paginationResponse.setPageNumber(pageEmailTemplate.getNumber());
+        paginationResponse.setPageSize(pageEmailTemplate.getSize());
+        paginationResponse.setTotalElements(pageEmailTemplate.getNumberOfElements());
+        paginationResponse.setTotalPages(pageEmailTemplate.getTotalPages());
+        paginationResponse.setLastPage(pageEmailTemplate.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<EmailTemplate> pageEmailTemplate = emailTemplateRepository.findEmailTemplateByName(name,page);
+        List<EmailTemplate> emailTemplateList = pageEmailTemplate.getContent();
+
+        List<EmailTemplateDto> emailTemplateDtoList = new ArrayList<>();
+        for (EmailTemplate emailTemplate : emailTemplateList) {
+            EmailTemplateDto emailTemplateDto = toDto(emailTemplate);
+            emailTemplateDtoList.add(emailTemplateDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(emailTemplateDtoList);
+        paginationResponse.setPageNumber(pageEmailTemplate.getNumber());
+        paginationResponse.setPageSize(pageEmailTemplate.getSize());
+        paginationResponse.setTotalElements(pageEmailTemplate.getNumberOfElements());
+        paginationResponse.setTotalPages(pageEmailTemplate.getTotalPages());
+        paginationResponse.setLastPage(pageEmailTemplate.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public EmailTemplateDto findById(Long id) {
         EmailTemplate emailTemplate = emailTemplateRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Email Template not found for id => %d", id)));
@@ -71,18 +123,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         EmailTemplate emailTemplate = emailTemplateRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Email Template not found for name => %s", name)));
         return toDto(emailTemplate);
-    }
-
-    @Override
-    public List<EmailTemplateDto> searchByName(String name) {
-        List<EmailTemplate> emailTemplateList = emailTemplateRepository.findEmailTemplateByName(name);
-        List<EmailTemplateDto> emailTemplateDtoList = new ArrayList<>();
-
-        for (EmailTemplate emailTemplate : emailTemplateList) {
-            EmailTemplateDto emailTemplateDto = toDto(emailTemplate);
-            emailTemplateDtoList.add(emailTemplateDto);
-        }
-        return emailTemplateDtoList;
     }
 
     @Override

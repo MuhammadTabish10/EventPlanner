@@ -1,12 +1,18 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.LocationDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.QuestionsDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Location;
 import com.EventPlanner.model.Questions;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.QuestionsRepository;
 import com.EventPlanner.service.QuestionsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,7 +29,6 @@ public class QuestionsServiceImpl implements QuestionsService {
         this.questionsRepository = questionsRepository;
         this.accountRepository = accountRepository;
     }
-
 
     @Override
     @Transactional
@@ -52,6 +57,52 @@ public class QuestionsServiceImpl implements QuestionsService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedQuestion(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Questions> pageQuestions = questionsRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Questions> questionsList = pageQuestions.getContent();
+
+        List<QuestionsDto> questionDtoList = new ArrayList<>();
+        for (Questions questions : questionsList) {
+            QuestionsDto questionsDto = toDto(questions);
+            questionDtoList.add(questionsDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(questionDtoList);
+        paginationResponse.setPageNumber(pageQuestions.getNumber());
+        paginationResponse.setPageSize(pageQuestions.getSize());
+        paginationResponse.setTotalElements(pageQuestions.getNumberOfElements());
+        paginationResponse.setTotalPages(pageQuestions.getTotalPages());
+        paginationResponse.setLastPage(pageQuestions.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByQuestion(String question, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Questions> pageQuestions = questionsRepository.findQuestionsByQuestion(question,page);
+        List<Questions> questionsList = pageQuestions.getContent();
+
+        List<QuestionsDto> questionDtoList = new ArrayList<>();
+        for (Questions questions : questionsList) {
+            QuestionsDto questionsDto = toDto(questions);
+            questionDtoList.add(questionsDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(questionDtoList);
+        paginationResponse.setPageNumber(pageQuestions.getNumber());
+        paginationResponse.setPageSize(pageQuestions.getSize());
+        paginationResponse.setTotalElements(pageQuestions.getNumberOfElements());
+        paginationResponse.setTotalPages(pageQuestions.getTotalPages());
+        paginationResponse.setLastPage(pageQuestions.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public QuestionsDto findById(Long id) {
         Questions questions = questionsRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Questions not found for id => %d", id)));
@@ -65,17 +116,6 @@ public class QuestionsServiceImpl implements QuestionsService {
         return toDto(questions);
     }
 
-    @Override
-    public List<QuestionsDto> searchByQuestion(String question) {
-        List<Questions> questionList = questionsRepository.findQuestionsByQuestion(question);
-        List<QuestionsDto> questionsDtoList = new ArrayList<>();
-
-        for (Questions questions : questionList) {
-            QuestionsDto questionsDto = toDto(questions);
-            questionsDtoList.add(questionsDto);
-        }
-        return questionsDtoList;
-    }
 
     @Override
     @Transactional

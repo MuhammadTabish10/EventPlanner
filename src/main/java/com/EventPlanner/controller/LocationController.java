@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.LocationDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.LocationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,16 @@ public class LocationController {
     public ResponseEntity<List<LocationDto>> getAllocations() {
         List<LocationDto> locationDtoList = locationService.getAll();
         return ResponseEntity.ok(locationDtoList);
+    }
+
+    @GetMapping("/location/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedLocation(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = locationService.getAllPaginatedLocation(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @GetMapping("/location/{id}")

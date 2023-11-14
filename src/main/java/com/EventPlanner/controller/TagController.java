@@ -1,5 +1,6 @@
 package com.EventPlanner.controller;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.service.TagService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class TagController {
         return ResponseEntity.ok(tagDtoList);
     }
 
+    @GetMapping("/tag/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedTag(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = tagService.getAllPaginatedTag(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
     @GetMapping("/tag/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<TagDto> getTagById(@PathVariable Long id) {
@@ -47,9 +58,13 @@ public class TagController {
 
     @GetMapping("/tag/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<TagDto>> getAllTagByName(@PathVariable String name) {
-        List<TagDto> tagDtoList = tagService.searchByName(name);
-        return ResponseEntity.ok(tagDtoList);
+    public ResponseEntity<PaginationResponse> getAllTagByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = tagService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/tag/{id}")

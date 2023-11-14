@@ -1,14 +1,20 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
+import com.EventPlanner.dto.QuestionsDto;
 import com.EventPlanner.dto.RoomDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Account;
+import com.EventPlanner.model.Questions;
 import com.EventPlanner.model.Room;
 import com.EventPlanner.model.Venue;
 import com.EventPlanner.repository.AccountRepository;
 import com.EventPlanner.repository.RoomRepository;
 import com.EventPlanner.repository.VenueRepository;
 import com.EventPlanner.service.RoomService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -61,6 +67,52 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedRoom(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Room> pageRoom = roomRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Room> roomList = pageRoom.getContent();
+
+        List<RoomDto> roomDtoList = new ArrayList<>();
+        for (Room room : roomList) {
+            RoomDto roomDto = toDto(room);
+            roomDtoList.add(roomDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(roomDtoList);
+        paginationResponse.setPageNumber(pageRoom.getNumber());
+        paginationResponse.setPageSize(pageRoom.getSize());
+        paginationResponse.setTotalElements(pageRoom.getNumberOfElements());
+        paginationResponse.setTotalPages(pageRoom.getTotalPages());
+        paginationResponse.setLastPage(pageRoom.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Room> pageRoom = roomRepository.findRoomByName(name,page);
+        List<Room> roomList = pageRoom.getContent();
+
+        List<RoomDto> roomDtoList = new ArrayList<>();
+        for (Room room : roomList) {
+            RoomDto roomDto = toDto(room);
+            roomDtoList.add(roomDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(roomDtoList);
+        paginationResponse.setPageNumber(pageRoom.getNumber());
+        paginationResponse.setPageSize(pageRoom.getSize());
+        paginationResponse.setTotalElements(pageRoom.getNumberOfElements());
+        paginationResponse.setTotalPages(pageRoom.getTotalPages());
+        paginationResponse.setLastPage(pageRoom.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public RoomDto findById(Long id) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Room not found for id => %d", id)));
@@ -72,18 +124,6 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Room not found for name => %s", name)));
         return toDto(room);
-    }
-
-    @Override
-    public List<RoomDto> searchByName(String name) {
-        List<Room> roomList = roomRepository.findRoomByName(name);
-        List<RoomDto> roomDtoList = new ArrayList<>();
-
-        for (Room room : roomList) {
-            RoomDto roomDto = toDto(room);
-            roomDtoList.add(roomDto);
-        }
-        return roomDtoList;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.ChartOfAccountDto;
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.service.ChartOfAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,17 @@ public class ChartOfAccountController {
         return ResponseEntity.ok(chartOfAccountDtoList);
     }
 
+    @GetMapping("/chart-of-account/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<PaginationResponse> getAllPaginatedChartOfAccount(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = chartOfAccountService.getAllPaginatedChartOfAccount(pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
+    }
+
+
     @GetMapping("/chart-of-account/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ChartOfAccountDto> getChartOfAccountById(@PathVariable Long id) {
@@ -47,9 +59,13 @@ public class ChartOfAccountController {
 
     @GetMapping("/chart-of-account/names/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ChartOfAccountDto>> getAllChartOfAccountByName(@PathVariable String name) {
-        List<ChartOfAccountDto> chartOfAccountDtoList = chartOfAccountService.searchByName(name);
-        return ResponseEntity.ok(chartOfAccountDtoList);
+    public ResponseEntity<PaginationResponse> getAllChartOfAccountByName(
+            @PathVariable String name,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        PaginationResponse paginationResponse = chartOfAccountService.searchByName(name, pageNumber, pageSize);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @DeleteMapping("/chart-of-account/{id}")

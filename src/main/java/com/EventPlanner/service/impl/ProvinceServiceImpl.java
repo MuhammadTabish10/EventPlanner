@@ -1,13 +1,16 @@
 package com.EventPlanner.service.impl;
 
+import com.EventPlanner.dto.PaginationResponse;
 import com.EventPlanner.dto.ProvinceDto;
 import com.EventPlanner.exception.RecordNotFoundException;
 import com.EventPlanner.model.Country;
 import com.EventPlanner.model.Province;
 import com.EventPlanner.repository.CountryRepository;
-import com.EventPlanner.repository.LocationRepository;
 import com.EventPlanner.repository.ProvinceRepository;
 import com.EventPlanner.service.ProvinceService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -52,6 +55,52 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
+    public PaginationResponse getAllPaginatedProvince(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Province> pageProvince = provinceRepository.findAllInDesOrderByIdAndStatus(page);
+        List<Province> provinceList = pageProvince.getContent();
+
+        List<ProvinceDto> provinceDtoList = new ArrayList<>();
+        for (Province province : provinceList) {
+            ProvinceDto provinceDto = toDto(province);
+            provinceDtoList.add(provinceDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(provinceDtoList);
+        paginationResponse.setPageNumber(pageProvince.getNumber());
+        paginationResponse.setPageSize(pageProvince.getSize());
+        paginationResponse.setTotalElements(pageProvince.getNumberOfElements());
+        paginationResponse.setTotalPages(pageProvince.getTotalPages());
+        paginationResponse.setLastPage(pageProvince.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
+    public PaginationResponse searchByName(String name, Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<Province> pageProvince = provinceRepository.findProvinceByName(name,page);
+        List<Province> provinceList = pageProvince.getContent();
+
+        List<ProvinceDto> provinceDtoList = new ArrayList<>();
+        for (Province province : provinceList) {
+            ProvinceDto provinceDto = toDto(province);
+            provinceDtoList.add(provinceDto);
+        }
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setContent(provinceDtoList);
+        paginationResponse.setPageNumber(pageProvince.getNumber());
+        paginationResponse.setPageSize(pageProvince.getSize());
+        paginationResponse.setTotalElements(pageProvince.getNumberOfElements());
+        paginationResponse.setTotalPages(pageProvince.getTotalPages());
+        paginationResponse.setLastPage(pageProvince.isLast());
+
+        return paginationResponse;
+    }
+
+    @Override
     public ProvinceDto findById(Long id) {
         Province province = provinceRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Province not found for id => %d", id)));
@@ -63,18 +112,6 @@ public class ProvinceServiceImpl implements ProvinceService {
         Province province = provinceRepository.findByName(name)
                 .orElseThrow(() -> new RecordNotFoundException(String.format("Province not found for name => %s", name)));
         return toDto(province);
-    }
-
-    @Override
-    public List<ProvinceDto> searchByName(String name) {
-        List<Province> provinceList = provinceRepository.findProvinceByName(name);
-        List<ProvinceDto> provinceDtoList = new ArrayList<>();
-
-        for (Province province : provinceList) {
-            ProvinceDto provinceDto = toDto(province);
-            provinceDtoList.add(provinceDto);
-        }
-        return provinceDtoList;
     }
 
     @Override
