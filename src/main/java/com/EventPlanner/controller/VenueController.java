@@ -1,7 +1,6 @@
 package com.EventPlanner.controller;
 
 import com.EventPlanner.dto.PaginationResponse;
-import com.EventPlanner.dto.TagDto;
 import com.EventPlanner.dto.VenueDto;
 import com.EventPlanner.service.VenueService;
 import org.springframework.http.ResponseEntity;

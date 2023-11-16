@@ -1,6 +1,5 @@
 package com.EventPlanner.repository;
 
-import com.EventPlanner.model.SubAccount;
 import com.EventPlanner.model.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
