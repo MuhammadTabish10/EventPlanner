@@ -14,14 +14,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "standard_price")
-public class StandardPrice {
+@Table(name = "discount_rule")
+public class DiscountRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String ticketName;
-    private Double price;
-    private Boolean status;
+
+    private String discountCode;
+    private String discountType;
+    private Integer maxAttendees;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDateAndTime;
@@ -29,11 +30,9 @@ public class StandardPrice {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDateAndTime;
 
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
-
-    @ManyToOne
-    @JoinColumn(name = "ticket_id")
-    private Ticket ticket;
 }

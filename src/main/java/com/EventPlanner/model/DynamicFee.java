@@ -14,20 +14,28 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "standard_price")
-public class StandardPrice {
+@Table(name = "dynamic_fee")
+public class DynamicFee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String ticketName;
+    private Double qty;
+    private Double standardPrice;
+    private String discountType;
+    private String percent;
     private Double price;
-    private Boolean status;
+    private Double discountedPrice;
+    private Integer maxAttendees;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDateAndTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDateAndTime;
+
+    private Boolean status;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
